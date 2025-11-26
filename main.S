@@ -22,13 +22,13 @@ print:
 kread:
      mov ah, 0x00 
      int 0x16 
-     cmp al, 0x0E
+     cmp ah, 0x0E
      je backspace 
 
      cmp al, 0x20 
      je space 
 
-     cmp al, 0x1C 
+     cmp ah, 0x1C 
      je enter
 
 
