@@ -41,10 +41,12 @@ backspace:
     call print 
 space:
   mov si, spc 
-  call print jmp kread
+  call print 
+  jmp kread
 enter: 
    mov si, ent 
-   call print jmp kread
+   call print 
+   jmp kread
 
 mensaje db "Oktopus Running", 0
 backsp db "BACKSPACE", 0
