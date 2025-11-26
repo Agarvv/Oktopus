@@ -2,7 +2,7 @@ bits 16
 org 0x7C00       
 
 start:
-    ; Tu código aquí
+    
     mov si, mensaje
     call imprimir
     jmp $       
@@ -18,7 +18,7 @@ imprimir:
 .fin:
     ret
 
-mensaje db "hola", 0
+mensaje db "Oktopus Running", 0
 
 
 times 510 - ($ - $$) db 0
