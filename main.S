@@ -55,7 +55,7 @@ enter:
 mensaje db "Oktopus Running", 0
 backsp db "BACKSPACE", 0
 spc db "SPACE", 0
-ent db, "ENTER", 0
+ent db "ENTER", 0
 
 
 
