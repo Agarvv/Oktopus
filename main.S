@@ -4,19 +4,27 @@ org 0x7C00
 start:
     
     mov si, mensaje
-    call imprimir
-    jmp $       
+    call print
+    call kread 
+    jmp $
 
-imprimir:
+print:
     mov ah, 0x0E
-.bucle:
+.loop:
     lodsb
     cmp al, 0
-    je .fin
+    je .end
     int 0x10     
-    jmp .bucle
-.fin:
+    jmp .loop
+.end:
     ret
+    
+kread:
+     mov ah, 0x00 
+     int 0x16 
+     
+     mov ah, 0x0E 
+     int 0x10 
 
 mensaje db "Oktopus Running", 0
 
