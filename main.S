@@ -37,20 +37,14 @@ kread:
      jmp kread 
 
 backspace:
-    mov ah, 0x0E
-    mov al, backsp
-    int 0x10
-
+    mov si, backsp 
+    call print 
 space:
-  mov ah, 0x0E
-  mov al, spc
-  int 0x10 
-
+  mov si, spc 
+  call print jmp kread
 enter: 
-   mov ah, 0x0E
-   mov al, ent 
-   int 0x10 
-
+   mov si, ent 
+   call print jmp kread
 
 mensaje db "Oktopus Running", 0
 backsp db "BACKSPACE", 0
