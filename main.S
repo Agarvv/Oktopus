@@ -22,10 +22,9 @@ print:
 kread:
      mov ah, 0x00 
      int 0x16 
-     
-     mov ah, 0x0E 
+     mov ah, 0x0E  
      int 0x10 
-
+     jmp kread 
 mensaje db "Oktopus Running", 0
 
 
