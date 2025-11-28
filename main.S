@@ -2,60 +2,44 @@ bits 16
 org 0x7C00       
 
 start:
+    ; disable interrupts 
+    PUSHF
+    POP AX 
+    AND AX, 0xFFFFFDFF
+    PUSH AX 
+    POPF 
     
-    mov si, mensaje
-    call print
-    call kread 
-    jmp $
 
-print:
-    mov ah, 0x0E
-.loop:
-    lodsb
-    cmp al, 0
-    je .end
-    int 0x10     
-    jmp .loop
-.end:
-    ret
+gdt_start:
+
+    dd 0x00000000
+    dd 0x00000000
     
-kread:
-     mov ah, 0x00 
-     int 0x16 
-     cmp ah, 0x0E
-     je backspace 
+    dw 0xFFFF     
+    dw 0x0000      
+    db 0x00        
+    db 10011010b  
+    db 11001111b  
+    db 0x00        
+    
 
-     cmp al, 0x20 
-     je space 
+    dw 0xFFFF      
+    dw 0x0000      
+    db 0x00        
+    db 10010010b   
+    db 11001111b   
+    db 0x00       
+gdt_end:
 
-     cmp ah, 0x1C 
-     je enter
+gdt_descriptor:
+    dw gdt_end - gdt_start - 1
+    dd gdt_start
 
-
-     mov ah, 0x0E  
-     int 0x10 
-     jmp kread 
-
-backspace:
-    mov si, backsp 
-    call print 
-space:
-  mov si, spc 
-  call print 
-  jmp kread
-enter: 
-   mov si, ent 
-   call print 
-   jmp kread
-
-mensaje db "Oktopus Running", 0
-backsp db "BACKSPACE", 0
-spc db "SPACE", 0
-ent db "ENTER", 0
+    LGDT [gdt_descriptor]
 
 
 
-times 510 - ($ - $$) db 0
+    JMP $
 
-
-dw 0xAA55
+TIMES 510 - ($ - $$) DB 0
+DW 0xAA55s
