@@ -57,7 +57,7 @@ kern:
    MOV AL, 0x0E
    MOV AL, 'A' 
    INT 0x10
-   JMP $ 
+   
    
     
 
