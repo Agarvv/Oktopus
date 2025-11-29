@@ -1,6 +1,10 @@
 bits 16          
 org 0x7C00       
 
+.data:
+   num db, 0
+   
+
 start:
     ; disable interrupts 
     PUSHF
@@ -51,15 +55,80 @@ gdt_descriptor:
     JMP 0x0008:kern
 
 bits 32 
+
+kboard_in_handler:
+    PUSHA 
+    INC num
+    MOV BYTE [0xB8000], 'O'
+    POPA
+    IRET
+
+idt_st: 
+dw kboard_in_handler ; first offset 
+dw 0x00000008 ; code selector on GDT 
+db 0x0000 ; zero 
+
+; type atrributes:
+; 1 00 0 0000
+; ^ present
+
+
+; 1 00 0 0000
+;   ^^ privilege level (0 == kernel, 3 == user)
+
+
+; type atrributes:
+; 1 00 0 0000
+;      ^ storage segment
+
+
+
+; type atrributes:
+; 1 00 0 0000
+;        ^^^^ interrupt type 
+
+; 5 = task gate  (16 bits)
+; 6 = Interrupt gate (16 bits)
+; 7 = trap gate (16 bits)
+; 0xE = interrupt gate (32 bits)
+; 0xf (32 bits)
+
+; normally we want type attributes in 0x8E or 10001110 on interruptions
+db 0x8E
+
+dw kboard_in_handler >> 16 ; second offset 
+
+times 256*8 db 0 
+idt_en
+
+idtr:
+    dw idt_en - idt_st - 1 
+    dd idt_st
+
+lidt [idtr]
+
 kern: 
-   MOV SS, ax
+   MOV BYTE [0xB8000], 'O' 
+   ; stack config 
+   MOV SS, AX 
    MOV ESP, 0x9FC00
-   MOV AL, 0x0E
-   MOV AL, 'A' 
-   INT 0x10
+
+
+   ; enable interrupts 
+   PUSHF
+   POP AX
+   AND AX, 0x0200
+   PUSH AX
+   POPF 
+   MOV BYTE [0xB8000], 'O'
+
+
+
    
+
+
+   JMP $
    
     
-
 TIMES 510 - ($ - $$) DB 0
 DW 0xAA55
