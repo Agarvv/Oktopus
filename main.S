@@ -36,10 +36,25 @@ gdt_descriptor:
     dd gdt_start
 
     LGDT [gdt_descriptor]
+    MOV EAX, 0x0010 
+    MOV DS, EAX
+    MOV SS, EAX
+    MOV ES, EAX
+    MOV FS, EAX 
+    MOV GS, EAX 
 
-
+    ; turn on protected mode 
+    MOV EAX, CR0 
+    OR EAX, 0x00000080
+    MOV CR0, EAX 
+    
+    JMP 0x0008:kern
 
     JMP $
+    
+kern: 
+  
+   
 
 TIMES 510 - ($ - $$) DB 0
 DW 0xAA55s
