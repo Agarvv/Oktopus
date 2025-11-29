@@ -50,9 +50,8 @@ gdt_descriptor:
     
     JMP 0x0008:kern
 
-    JMP $
-    
 kern: 
+   JMP $ 
   
    
 
