@@ -38,10 +38,10 @@ gdt_descriptor:
     LGDT [gdt_descriptor]
     MOV AX, 0x0010 
     MOV DS, AX
-    MOV SS, AX
     MOV ES, AX
     MOV FS, AX 
     MOV GS, AX 
+    
 
     ; turn on protected mode 
     MOV AX, CR0     
@@ -52,6 +52,8 @@ gdt_descriptor:
 
 bits 32 
 kern: 
+   MOV SS, 0x0010
+   MOV SP, 0x9FC00
    JMP $ 
    
     
