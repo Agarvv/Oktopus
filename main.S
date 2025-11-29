@@ -54,6 +54,9 @@ bits 32
 kern: 
    MOV SS, ax
    MOV ESP, 0x9FC00
+   MOV AL, 0x0E
+   MOV AL, 'A' 
+   INT 0x10
    JMP $ 
    
     
