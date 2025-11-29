@@ -43,17 +43,17 @@ gdt_descriptor:
     MOV GS, AX 
     
 
-    ; turn on protected mode 
-    MOV AX, CR0     
-    OR AX, 0x0001    
-    MOV CR0, AX      
+     ; turn on protected mode 
+   MOV EAX, CR0     
+     OR EAX, 0x00000001    
+   MOV CR0, EAX      
     
     JMP 0x0008:kern
 
 bits 32 
 kern: 
-   MOV SS, 0x0010
-   MOV SP, 0x9FC00
+   MOV SS, ax
+   MOV ESP, 0x9FC00
    JMP $ 
    
     
