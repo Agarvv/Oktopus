@@ -4,10 +4,10 @@ org 0x7C00
 start:
     ; disable interrupts 
     PUSHF
-    POP AX 
-    AND AX, 0xFFFFFDFF
-    PUSH AX 
-    POPF 
+    POP AX
+    AND AX, 0xFDFF  
+    PUSH AX
+    POPF
     
 
 gdt_start:
@@ -36,24 +36,25 @@ gdt_descriptor:
     dd gdt_start
 
     LGDT [gdt_descriptor]
-    MOV EAX, 0x0010 
-    MOV DS, EAX
-    MOV SS, EAX
-    MOV ES, EAX
-    MOV FS, EAX 
-    MOV GS, EAX 
+    MOV AX, 0x0010 
+    MOV DS, AX
+    MOV SS, AX
+    MOV ES, AX
+    MOV FS, AX 
+    MOV GS, AX 
 
     ; turn on protected mode 
-    MOV EAX, CR0 
-    OR EAX, 0x00000080
-    MOV CR0, EAX 
+    MOV AX, CR0     
+    OR AX, 0x0001    
+    MOV CR0, AX      
     
     JMP 0x0008:kern
 
+bits 32 
 kern: 
    JMP $ 
-  
    
+    
 
 TIMES 510 - ($ - $$) DB 0
-DW 0xAA55s
+DW 0xAA55
