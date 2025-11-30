@@ -2,7 +2,7 @@ bits 16
 org 0x7C00       
 
 .data:
-   num db, 0
+   num db 0
    
 
 start:
@@ -58,13 +58,13 @@ bits 32
 
 kboard_in_handler:
     PUSHA 
-    INC num
+    
     MOV BYTE [0xB8000], 'O'
     POPA
     IRET
 
 idt_st: 
-dw kboard_in_handler ; first offset 
+dw 0x0000 ; first offset 
 dw 0x00000008 ; code selector on GDT 
 db 0x0000 ; zero 
 
@@ -96,9 +96,9 @@ db 0x0000 ; zero
 ; normally we want type attributes in 0x8E or 10001110 on interruptions
 db 0x8E
 
-dw kboard_in_handler >> 16 ; second offset 
+dw 0x0000; second offset 
 
-times 256*8 db 0 
+times 32*8 db 0 
 idt_en
 
 idtr:
@@ -114,15 +114,27 @@ kern:
    MOV ESP, 0x9FC00
 
 
+   
+ 
+ 
+ 
+   mov eax, kboard_in_handler 
+   mov ebx, idt_st 
+   
+   mov word [ebx], ax 
+   shr eax, 16
+   mov word [ebx+6], ax 
+   
+   MOV BYTE [0xB8000], 'O'
+
+   
    ; enable interrupts 
    PUSHF
    POP AX
    AND AX, 0x0200
    PUSH AX
    POPF 
-   MOV BYTE [0xB8000], 'O'
-
-
+   
 
    
 
