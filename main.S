@@ -77,7 +77,7 @@ kboard_in_handler:
 idt_st: 
 dw 0x0000 ; first offset 
 dw 0x00000008 ; code selector on GDT 
-db 0x0000 ; zero 
+db 0x00 ; zero 
 
 ; type atrributes:
 ; 1 00 0 0000
@@ -117,25 +117,21 @@ idtr:
     dd idt_st
 
 lidt [idtr]
-
 kern:  
-
+  
    MOV AX, 0x0010 
     MOV DS, AX
     MOV ES, AX
     MOV FS, AX 
     MOV GS, AX 
 
-   MOV BYTE [0xB8000], 'O' 
+   MOV BYTE [0xB8000], 'K' 
+
    ; stack config 
    MOV SS, AX 
    MOV ESP, 0x9FC00
 
-
    
- 
- 
- 
    mov eax, kboard_in_handler 
    mov ebx, idt_st 
    
@@ -154,10 +150,9 @@ kern:
    POPF 
    
 
-   MOV BYTE [0xB8000], 'O'
-
-
-   JMP $
+   MOV BYTE [0xB8000+2], 'O'
+   
+    JMP $
    
     
 TIMES 510 - ($ - $$) DB 0
