@@ -6,6 +6,12 @@ org 0x7C00
    
 
 start:
+    MOV AL, 'a'
+    mov AH, 0x0E
+    int 0x10
+
+
+    
     ; disable interrupts 
     PUSHF
     POP AX
@@ -40,11 +46,16 @@ gdt_descriptor:
     dd gdt_start
 
     LGDT [gdt_descriptor]
+
     MOV AX, 0x0010 
     MOV DS, AX
     MOV ES, AX
     MOV FS, AX 
     MOV GS, AX 
+
+    MOV AL, 'a'
+    mov AH, 0x0E
+    int 0x10
     
 
      ; turn on protected mode 
@@ -114,7 +125,7 @@ kern:
     MOV ES, AX
     MOV FS, AX 
     MOV GS, AX 
-    
+
    MOV BYTE [0xB8000], 'O' 
    ; stack config 
    MOV SS, AX 
