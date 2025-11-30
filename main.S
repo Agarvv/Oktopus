@@ -107,7 +107,14 @@ idtr:
 
 lidt [idtr]
 
-kern: 
+kern:  
+
+   MOV AX, 0x0010 
+    MOV DS, AX
+    MOV ES, AX
+    MOV FS, AX 
+    MOV GS, AX 
+    
    MOV BYTE [0xB8000], 'O' 
    ; stack config 
    MOV SS, AX 
