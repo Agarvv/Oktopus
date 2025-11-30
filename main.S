@@ -125,7 +125,7 @@ kern:
    shr eax, 16
    mov word [ebx+6], ax 
    
-   MOV BYTE [0xB8000], 'O'
+   
 
    
    ; enable interrupts 
@@ -136,7 +136,7 @@ kern:
    POPF 
    
 
-   
+   MOV BYTE [0xB8000], 'O'
 
 
    JMP $
