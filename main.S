@@ -2,6 +2,8 @@ bits 16
 org 0x7C00
 
 start:
+   mov dword [0x9000], 0x12345678
+
     cli                    
 
     gdt_start:
