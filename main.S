@@ -2,7 +2,6 @@ bits 16
 org 0x7C00
 
 start:
-   mov dword [0x9000], 0x12345678
 
     cli                    
 
@@ -37,7 +36,7 @@ start:
     mov cr0, eax
 
 
-    jmp 0x08:protected_start
+    jmp 0x08:dword protected_start 
 
 bits 32
 protected_start:
