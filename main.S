@@ -63,7 +63,7 @@ gdt_descriptor:
      OR EAX, 0x00000001    
    MOV CR0, EAX      
     
-    JMP 0x0008:kern
+    JMP 0x08:kern
 
 bits 32 
 
