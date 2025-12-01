@@ -6,18 +6,9 @@ org 0x7C00
    
 
 start:
-    MOV AL, 'a'
-    mov AH, 0x0E
-    int 0x10
-
-
-    
+    MOV DWORD [0x9000], 0x12345678
     ; disable interrupts 
-    PUSHF
-    POP AX
-    AND AX, 0xFDFF  
-    PUSH AX
-    POPF
+    cli 
     
 
 gdt_start:
@@ -110,7 +101,7 @@ db 0x8E
 dw 0x0000; second offset 
 
 times 32*8 db 0 
-idt_en
+idt_en:
 
 idtr:
     dw idt_en - idt_st - 1 
@@ -143,16 +134,12 @@ kern:
 
    
    ; enable interrupts 
-   PUSHF
-   POP AX
-   AND AX, 0x0200
-   PUSH AX
-   POPF 
+   sti
    
 
-   MOV BYTE [0xB8000+2], 'O'
+   MOV DWORD [0x9000], 0x12345678
    
-    JMP $
+   JMP $
    
     
 TIMES 510 - ($ - $$) DB 0
