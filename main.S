@@ -124,14 +124,16 @@ kern:
     MOV ES, AX
     MOV FS, AX 
     MOV GS, AX 
+    MOV SS, AX
 
-   MOV BYTE [0xB8000], 'K' 
+   ; Escribir a video memory
+   MOV EAX, 0xB8000
+   MOV BYTE [EAX], 'K'
+   MOV BYTE [EAX + 1], 0x0F  ; Atributo: blanco sobre negro 
 
    ; stack config 
-   MOV SS, AX 
    MOV ESP, 0x9FC00
 
-   
    mov eax, kboard_in_handler 
    mov ebx, idt_st 
    
@@ -139,12 +141,8 @@ kern:
    shr eax, 16
    mov word [ebx+6], ax 
    
-   
-
-   
    ; enable interrupts 
    sti
-   
 
    MOV DWORD [0x9000], 0x12345678
    
