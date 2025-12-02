@@ -4,6 +4,10 @@ org 0x7C00
 
 
 start:
+   mov dx, 0x3F8
+mov al, 'D'
+out dx, al
+
    cli
    lgdt [gdt_des]
 
@@ -14,6 +18,11 @@ start:
    mov eax, cr0          
    or eax, 1
    mov cr0, eax
+
+   mov dx, 0x3F8
+mov al, 'C'
+out dx, al
+
 
    jmp 0x08:protected_mode_start
 
@@ -31,6 +40,10 @@ protected_mode_start:
    mov edi, 0xB8000    
    mov byte [edi], 'P' 
    mov byte [edi+1], 0x0E  
+   mov dx, 0x3F8
+mov al, 'O'
+out dx, al
+
 
    jmp $
 
