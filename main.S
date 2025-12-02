@@ -32,6 +32,7 @@ gdt_descriptor:
 
 
 start_code:
+cli
  lgdt [gdt_descriptor]
  mov AH, 0x0E
  mov AL, 'E'
