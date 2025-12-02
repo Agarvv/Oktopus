@@ -1,86 +1,53 @@
 bits 16          
 org 0x7C00       
 
-.data:
-   num db 0
-   
-
 start:
     jmp bt
-    
 
+align 4
 gdt_start:
-
+    ; Null descriptor
     dd 0x00000000
     dd 0x00000000
     
-    dw 0xFFFF     
-    dw 0x0000      
-    db 0x00        
-    db 10011010b  
-    db 11001111b  
-    db 0x00        
-    
+    ; Code descriptor (0x08)
+    dw 0xFFFF           ; Limit low
+    dw 0x0000           ; Base low
+    db 0x00             ; Base mid
+    db 10011010b        ; Access byte (code, readable)
+    db 11001111b        ; Granularity (4KB, 32-bit)
+    db 0x00             ; Base high
 
-    dw 0xFFFF      
-    dw 0x0000      
-    db 0x00        
-    db 10010010b   
-    db 11001111b   
-    db 0x00       
+    ; Data descriptor (0x10)
+    dw 0xFFFF           ; Limit low
+    dw 0x0000           ; Base low
+    db 0x00             ; Base mid
+    db 10010010b        ; Access byte (data, writable)
+    db 11001111b        ; Granularity (4KB, 32-bit)
+    db 0x00             ; Base high
 gdt_end:
 
 gdt_descriptor:
     dw gdt_end - gdt_start - 1
-    dd gdt_start
-
-
-
-bits 32 
+    dd gdt_start 
 
 kboard_in_handler:
     PUSHA 
-    
     MOV BYTE [0xB8000], 'O'
     POPA
     IRET
 
+align 4
 idt_st: 
-dw 0x0000 ; first offset 
-dw 0x00000008 ; code selector on GDT 
-db 0x00 ; zero 
+    ; First IDT entry (interrupt 0)
+    dw 0x0000              ; offset low
+    dw 0x08                ; selector
+    db 0x00                ; zero
+    db 0x8E                ; type/attributes (32-bit interrupt gate, present)
+    dw 0x0000              ; offset high
+    
+    times (32*8)-8 db 0    ; Fill rest of IDT
 
-; type atrributes:
-; 1 00 0 0000
-; ^ present
-
-
-; 1 00 0 0000
-;   ^^ privilege level (0 == kernel, 3 == user)
-
-
-; type atrributes:
-; 1 00 0 0000
-;      ^ storage segment
-
-
-
-; type atrributes:
-; 1 00 0 0000
-;        ^^^^ interrupt type 
-
-; 5 = task gate  (16 bits)
-; 6 = Interrupt gate (16 bits)
-; 7 = trap gate (16 bits)
-; 0xE = interrupt gate (32 bits)
-; 0xf (32 bits)
-
-; normally we want type attributes in 0x8E or 10001110 on interruptions
-db 0x8E
-
-dw 0x0000; second offset 
-
-times 32*8 db 0 
 idt_en:
 
 idtr:
@@ -88,66 +55,52 @@ idtr:
     dd idt_st
 
 
-
+bits 16
 bt:
-LGDT [gdt_descriptor]
+    cli                    ; Disable interrupts
+    LGDT [gdt_descriptor]
 
-    MOV AX, 0x0010 
-    MOV DS, AX
-    MOV ES, AX
-    MOV FS, AX 
-    MOV GS, AX 
-
-lidt [idtr]
-
-
-     ; turn on protected mode 
-   MOV EAX, CR0     
-     OR EAX, 0x00000001    
-   MOV CR0, EAX      
+    ; Enable protected mode
+    MOV EAX, CR0     
+    OR EAX, 0x00000001    
+    MOV CR0, EAX      
     
-    JMP 0x08:kern
+    ; Far jump to flush pipeline and load code segment
+    JMP 0x08:protect_mode
+
+bits 32
+protect_mode:
 
 
 
 
 
-
-
-
-
-
-kern:  
-  
-   MOV AX, 0x0010 
+protect_mode:
+    ; Load data segment selector
+    MOV AX, 0x10
     MOV DS, AX
     MOV ES, AX
-    MOV FS, AX 
-    MOV GS, AX 
+    MOV FS, AX
+    MOV GS, AX
     MOV SS, AX
 
-   ; Escribir a video memory
-   MOV EAX, 0xB8000
-   MOV BYTE [EAX], 'K'
-   MOV BYTE [EAX + 1], 0x0F  ; Atributo: blanco sobre negro 
+    ; Setup stack
+    MOV ESP, 0x9FC00
 
-   ; stack config 
-   MOV ESP, 0x9FC00
+    ; Load IDT
+    lidt [idtr]
 
-   mov eax, kboard_in_handler 
-   mov ebx, idt_st 
-   
-   mov word [ebx], ax 
-   shr eax, 16
-   mov word [ebx+6], ax 
-   
-   ; enable interrupts 
-   sti
+    ; Enable interrupts
+    sti
 
-   MOV DWORD [0x9000], 0x12345678
-   
-   JMP $
-   
+    ; Write 'K' to video memory at 0xB8000
+    MOV BYTE [0xB8000], 'K'
+    MOV BYTE [0xB8001], 0x0F  ; White on black
+
+    MOV DWORD [0x9000], 0x12345678
+    
+    JMP $
+    
     
 TIMES 510 - ($ - $$) DB 0
 DW 0xAA55
