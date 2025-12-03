@@ -38,7 +38,7 @@ protected_mode_start:
    mov esp, 0x80000
    
    mov edi, 0xB8000    
-   
+   mov byte [edi], 'X'
 
    mov dx, 0x3F8
    mov al, 'O'
