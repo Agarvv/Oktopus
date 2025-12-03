@@ -38,31 +38,12 @@ protected_mode_start:
    mov esp, 0x80000
    
    mov edi, 0xB8000    
-   mov byte [edi], 'O' 
-   mov byte [edi+1], 0x0E
-
-   mov byte [edi+2], 'k' 
-   mov byte [edi+3], 0x0E    
-
-   mov byte [edi+4], 't' 
-   mov byte [edi+5], 0x0E    
-
-   mov byte [edi+6], 'o' 
-   mov byte [edi+7], 0x0E  
-
-   mov byte [edi+8], 'p' 
-   mov byte [edi+9], 0x0E  
-
-   mov byte [edi+10], 'u' 
-   mov byte [edi+11], 0x0E  
-
-   mov byte [edi+12], 's' 
-   mov byte [edi+13], 0x0E  
-
+   
 
    mov dx, 0x3F8
    mov al, 'O'
    out dx, al
+   
 
 
    jmp $
@@ -142,15 +123,15 @@ protected_mode_start:
 gdt_start:
     dq 0                    
 
-  
+    ; code 
     dw 0xFFFF
     dw 0x0000
     db 0x00
     db 10011010b    
     db 11001111b    
     db 0x00
-
-
+  
+      ; data
     dw 0xFFFF
     dw 0x0000
     db 0x00
