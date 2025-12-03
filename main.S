@@ -45,6 +45,37 @@ protected_mode_start:
    mov dx, 0x3F8
    mov al, 'O'
    out dx, al
+  
+   ; check disk status
+   mov dx, 0x1F7
+   in al, dx 
+
+   ; al can look like this 00000000 
+   ; 00000000
+   ; ^ BUSY DISK
+
+   ; 00000000
+   ;  ^ Disk ready 
+
+   ; 00000000
+   ;   ^ Device fault 
+
+    ; 00000000
+   ;     ^ seek complete  
+
+   ; 00000000
+   ;     ^ data request, if 1, then disk has data to transfer, 
+         ; if 0, there is not pending data
+
+   ; 00000000
+   ;      ^  corrected error
+
+   ; 00000000
+   ;       ^  index mark
+
+   ; 00000000
+   ;        ^  operation error
+   
    
 
 
