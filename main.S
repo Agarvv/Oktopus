@@ -38,11 +38,12 @@ protected_mode_start:
    mov esp, 0x80000
    
    mov edi, 0xB8000    
-   mov byte [edi], 'H' 
+   mov byte [0xB8000], 'H' 
    mov byte [edi+1], 0x0E  
+
    mov dx, 0x3F8
-mov al, 'O'
-out dx, al
+   mov al, 'O'
+   out dx, al
 
 
    jmp $
