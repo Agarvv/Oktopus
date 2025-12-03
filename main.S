@@ -38,8 +38,20 @@ protected_mode_start:
    mov esp, 0x80000
    
    mov edi, 0xB8000    
-   mov byte [0xB8000], 'H' 
-   mov byte [edi+1], 0x0E  
+   mov byte [edi], 'h' 
+   mov byte [edi+1], 0x0E
+
+   mov byte [edi+2], 'u' 
+   mov byte [edi+3], 0x0E    
+
+   mov byte [edi+4], 'm' 
+   mov byte [edi+5], 0x0E    
+
+   mov byte [edi+6], 'a' 
+   mov byte [edi+7], 0x0E  
+
+   mov byte [edi+8], 'n' 
+   mov byte [edi+9], 0x0E  
 
    mov dx, 0x3F8
    mov al, 'O'
