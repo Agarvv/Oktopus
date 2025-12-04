@@ -154,10 +154,12 @@ protected_mode_start:
          mov dx, 0x3F8
          mov al, 'N'
          out dx, al
-         
+
          dec eax 
 
          jnz load_kern 
+
+         ret 
          
          
 
