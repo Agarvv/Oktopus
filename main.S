@@ -136,7 +136,7 @@ protected_mode_start:
           jz disk_status
 
           mov dx, 0x3F8
-         mov al, 'N'
+         mov al, 'J'
          out dx, al
           
          ; all conditions met, return.
