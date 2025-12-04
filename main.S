@@ -47,8 +47,12 @@ protected_mode_start:
    out dx, al
   
    ; check disk status
-   mov dx, 0x1F7
-   in al, dx 
+   jmp disk_status 
+   mov edi, 0xB8000
+   mov byte [edi+2], 'f'       
+   mov byte [edi+3], 0x07 
+
+
 
    ; al can look like this 00000000 
    ; 00000000
@@ -75,11 +79,52 @@ protected_mode_start:
 
    ; 00000000
    ;        ^  operation error
+
+
    
    
+   ; if disk not busy and ready, send i/o
+
+
+
+
+
+
+
+   mov al, 0x20 ; read command. for write, i would use 0x30, or 0x21 for read ext and 0x31 for write ext 
+   mov dx, 0x1F7
+   out dx, al
 
 
    jmp $
+
+   disk_status: 
+          ; first, check if bussy bit is one 
+           mov dx, 0x1F7
+           in al, dx 
+           mov ah, 0x00 
+           
+           ; 00000000
+           ; ^ BUSY DISK
+
+           ; mask: AND with 10000000 (0x80)
+
+           and al, 0x80 
+           jnz disk_status
+
+           mov dx, 0x1F7
+           in al, dx 
+         
+          ; if not one then not bussy, now check if ready bit is one, meaning ready 
+          ; 00000000
+          ;  ^ Disk ready
+          ; mask to apply: AND with 01000000 (0x40)
+          and al, 0x40 
+          jz disk_status
+          
+         ; all conditions met, return.
+         ret
+         
 
 
 
