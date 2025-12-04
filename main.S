@@ -47,7 +47,7 @@ protected_mode_start:
    out dx, al
   
    ; check disk status
-   jmp disk_status 
+   call disk_status 
 
    mov dx, 0x3F8
    mov al, 'N'
