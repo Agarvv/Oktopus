@@ -50,7 +50,7 @@ protected_mode_start:
    call disk_status 
 
    ; load kernel 
-   mov eax, 8185 ; number of sectors 
+   mov ecx, 8185 ; number of sectors 
    call load_kern 
 
 
@@ -155,7 +155,7 @@ protected_mode_start:
          mov al, 'N'
          out dx, al
 
-         dec eax 
+         dec ecx 
 
          jnz load_kern 
 
