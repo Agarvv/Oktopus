@@ -49,6 +49,12 @@ protected_mode_start:
    ; check disk status
    call disk_status 
 
+   ; load kernel 
+   mov eax, 8185 ; number of sectors 
+   call load_kern 
+
+
+
    mov dx, 0x3F8
    mov al, 'N'
    out dx, al
@@ -142,7 +148,18 @@ protected_mode_start:
          ; all conditions met, return.
          ret
          
+   
+   load_kern: 
+         ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox. 
+         mov dx, 0x3F8
+         mov al, 'N'
+         out dx, al
+         
+         dec eax 
 
+         jnz load_kern 
+         
+         
 
 
 
