@@ -52,6 +52,7 @@ protected_mode_start:
    mov dx, 0x3F8
    mov al, 'N'
    out dx, al
+
    mov edi, 0xB8000
    mov byte [edi+2], 'f'       
    mov byte [edi+3], 0x07 
@@ -103,6 +104,10 @@ protected_mode_start:
    jmp $
 
    disk_status: 
+          mov dx, 0x3F8
+          mov al, 'N'
+          out dx, al
+
           ; first, check if bussy bit is one 
            mov dx, 0x1F7
            in al, dx 
@@ -115,9 +120,13 @@ protected_mode_start:
 
            and al, 0x80 
            jnz disk_status
-
+     
            mov dx, 0x1F7
            in al, dx 
+
+           mov dx, 0x3F8
+           mov al, 'N'
+           out dx, al
          
           ; if not one then not bussy, now check if ready bit is one, meaning ready 
           ; 00000000
@@ -125,6 +134,10 @@ protected_mode_start:
           ; mask to apply: AND with 01000000 (0x40)
           and al, 0x40 
           jz disk_status
+
+          mov dx, 0x3F8
+         mov al, 'N'
+         out dx, al
           
          ; all conditions met, return.
          ret
