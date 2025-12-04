@@ -48,6 +48,10 @@ protected_mode_start:
   
    ; check disk status
    jmp disk_status 
+
+   mov dx, 0x3F8
+   mov al, 'N'
+   out dx, al
    mov edi, 0xB8000
    mov byte [edi+2], 'f'       
    mov byte [edi+3], 0x07 
