@@ -195,6 +195,10 @@ protected_mode_start:
 
    
    read_data: 
+         mov dx, 0x3F8
+         mov al, 'a'
+         out dx, al
+
           mov ecx, 0x00 ; increment to kernel mem addr 
           mov si, 256 ; 512/2 bytes 
       
@@ -210,10 +214,17 @@ protected_mode_start:
            inc cx 
            dec si 
            jnz read_data
+           mov dx, 0x3F8
+            mov al, 'b'
+            out dx, al
+         ret 
 
          
      
    load_kern: 
+         mov dx, 0x3F8
+         mov al, 'x'
+         out dx, al
          ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox.
          
          
@@ -272,7 +283,7 @@ protected_mode_start:
          
          
          mov dx, 0x3F8
-         mov al, 'N'
+         mov al, 'y'
          out dx, al
 
          
@@ -348,12 +359,20 @@ protected_mode_start:
          mov al, 0x20 ; 0x20 for read, 0x30 for write, 0x21 for read ext, 0x31 for write ext 
          out dx, al 
 
-         call read_data ; read data and put it somewhere well known on memory so we can jump there. 
+         mov dx, 0x3F8
+         mov al, 'z'
+         out dx, al
 
+         call read_data ; read data and put it somewhere well known on memory so we can jump there. 
+        
 
          dec ecx 
 
          jnz load_kern 
+
+         mov dx, 0x3F8
+         mov al, 'z'
+         out dx, al
 
          ret 
          
