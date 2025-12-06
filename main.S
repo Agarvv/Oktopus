@@ -52,6 +52,11 @@ protected_mode_start:
   
    ; check disk status
    call disk_status 
+   
+   mov edi, 0xB8000
+   mov byte [edi+2], 'f'       
+   mov byte [edi+3], 0x07  
+
 
    ; load kernel 
    mov ecx, 8185 
@@ -63,9 +68,7 @@ protected_mode_start:
    mov al, 'l'
    out dx, al
 
-   mov edi, 0xB8000
-   mov byte [edi+2], 'f'       
-   mov byte [edi+3], 0x07 
+  
 
 
 
