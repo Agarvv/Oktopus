@@ -5,8 +5,12 @@ org 0x7C00
 
 start:
    mov dx, 0x3F8
-mov al, 'D'
-out dx, al
+   mov al, 'D'
+   out dx, al
+   
+   mov ax, 2401h
+   int 15h
+
 
    cli
    lgdt [gdt_des]
@@ -188,11 +192,11 @@ protected_mode_start:
 
    
    read_data: 
-          mov cx, 0x00
-          mov si, 256 
+          mov cx, 0x00 ; increment to kernel mem addr 
+          mov si, 256 ; 512/2 bytes 
       
           mov dx, 0x1F0 
-          in ax, dx 
+          in ax, dx ; receive data 
            
            mov bx, 0x1000
            mov WORD [bx + cx], ax  
@@ -203,7 +207,63 @@ protected_mode_start:
          
      
    load_kern: 
-         ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox. 
+         ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox.
+         
+         
+         mov edi, 0x00000000 ; lba addr 
+         mov ebx, edi 
+         
+         ; 00000000000000000000000000000000
+         ;                         ^^^^^^^^ 
+         
+         ; ^^^ 
+         ; MASK: 
+         ; 00000000000000000000000011111111
+         ;                         ^^^^^^^^ 
+         ; 0x000000FF 
+         
+         
+         
+         
+         
+         
+         
+         ; 00000000000000000000000000000000
+         ;                 ^^^^^^^^
+         
+         
+         ; ^^^
+         ; MASK:
+         ; 00000000000000001111111100000000
+         ;                 ^^^^^^^^
+         ; 0x0000FF00 
+         
+         
+         
+         
+         
+         ; 00000000000000000000000000000000
+         ;         ^^^^^^^^
+         ; ^^^
+         ; MASK 
+         ; 0000000011111111 0000000000000000
+         ;         ^^^^^^^^
+         ; 0x00FF0000
+         
+         
+         
+         
+         
+         ; 00000000000000000000000000000000
+         ;     ^^^^
+         ; MASK: 
+         ; 00001111000000000000000000000000
+         ;     ^^^^
+         ; 0x0F000000
+           
+         
+         
+         
          mov dx, 0x3F8
          mov al, 'N'
          out dx, al
@@ -211,21 +271,34 @@ protected_mode_start:
          
          ; low LBA adress
          mov dx, 0x1F3
-         mov al, 0x01
+         AND ebx, 0x000000FF 
+         mov al, ebx 
          out dx, al 
-
+         mov ebx, edi 
+         
+         
          ; medium LBA adress
          mov dx, 0x1F4
-         mov al, 0x00
+         AND ebx, 0x0000FF00 
+         mov al, ebx 
+         shr ebx, 8 
+         
          out dx, al
+         mov ebx, edi 
 
          ; High LBA adress
          mov dx, 0x1F5
-         mov al, 0x00
+         AND ebx, 0x00FF0000 
+         shr ebx, 16
+         
+         mov al, ebx 
          out dx, al
+         mov ebx, edi 
 
          ; last 3 bits of lba adress and aditional flags 
-         ; we use 11100000
+         ; we use 11100000 (0xE0)
+         ; 1111 0000 
+         ; 1111 
          mov dx, 0x1F6
          mov al, 0xE0
          out dx, al 
@@ -246,7 +319,7 @@ protected_mode_start:
          ;      ^^^^ last bits of lba address
 
       
-         ; sectors to read 1
+         ; sectors to read (one)
          mov dx, 0x1F2
          mov al, 0x01
          out dx, al 
