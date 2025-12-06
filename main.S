@@ -60,7 +60,7 @@ protected_mode_start:
 
 
    mov dx, 0x3F8
-   mov al, 'N'
+   mov al, 'l'
    out dx, al
 
    mov edi, 0xB8000
