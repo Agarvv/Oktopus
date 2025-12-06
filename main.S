@@ -157,7 +157,6 @@ protected_mode_start:
    
    data_ready: 
            
-
            mov dx, 0x1F7
            in al, dx 
            mov ah, 0x00 
@@ -199,7 +198,6 @@ protected_mode_start:
          mov al, 'a'
          out dx, al
 
-          mov ecx, 0x00 ; increment to kernel mem addr 
           mov si, 256 ; 512/2 bytes 
       
           mov dx, 0x1F0 
@@ -208,12 +206,13 @@ protected_mode_start:
            mov ebx, 0x1000
            
            
-           mov WORD [ebx + ecx], ax  
+           mov WORD [ebx + ebp], ax  
            
            
            inc cx 
            dec si 
            jnz read_data
+           
            mov dx, 0x3F8
             mov al, 'b'
             out dx, al
@@ -361,13 +360,14 @@ protected_mode_start:
 
          mov dx, 0x3F8
          mov al, 'z'
-         out dx, al
-
+         out dx, al 
+         
+         mov ebp, 0x00 ; increment to kernel mem addr 
          call read_data ; read data and put it somewhere well known on memory so we can jump there. 
         
 
          dec ecx 
-
+    
          jnz load_kern 
 
          mov dx, 0x3F8
