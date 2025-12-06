@@ -69,7 +69,7 @@ protected_mode_start:
    mov byte [edi+2], 'f'       
    mov byte [edi+3], 0x07  
 
-   jmp 0x08:0x1000   
+   ; jmp 0x08:0x1000   
 
 
   
