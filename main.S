@@ -202,7 +202,6 @@ protected_mode_start:
           mov dx, 0x1F0 
           in ax, dx ; receive data 
            
-           mov ebx, 0x1000
            
            
            mov WORD [ebx + ebp], ax  
@@ -360,12 +359,13 @@ protected_mode_start:
          mov dx, 0x3F8
          mov al, 'z'
          out dx, al 
-         
+        
+        mov ebx, 0x1000 ; base kernel addr 
          mov ebp, 0x00 ; increment to kernel mem addr 
          mov si, 256 ; 512/2 bytes 
          call read_data ; read data and put it somewhere well known on memory so we can jump there. 
         
-
+         inc edi 
          dec ecx 
     
          jnz load_kern 
