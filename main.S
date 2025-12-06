@@ -50,7 +50,7 @@ protected_mode_start:
    call disk_status 
 
    ; load kernel 
-   mov ecx, 8185 ; number of sectors 
+   mov ecx, 8185 
    call load_kern 
 
 
@@ -147,13 +147,118 @@ protected_mode_start:
           
          ; all conditions met, return.
          ret
-         
    
+   data_ready: 
+           
+
+           mov dx, 0x1F7
+           in al, dx 
+           mov ah, 0x00 
+           
+           ; 00000000
+           ; ^ BUSY DISK
+
+           ; mask: AND with 10000000 (0x80)
+
+           and al, 0x80 
+           ; if bussy it means disk is working on our request so loop until it is not busssy anymore 
+           jnz data_ready
+
+           ; now if we are here it mean disk is not bussy anymore so 
+           ; we'll check if disk has data ready, if yes, return.
+
+           mov dx, 0x3F8
+           mov al, 'N'
+           out dx, al
+
+           ; 00000000
+           ;     ^ data request, if 1, then disk has data to transfer, 
+           ; if 0, there is not pending data
+
+           ; we need to check if that bit is one and if it is one it means that we have pending data 
+           ; so, we can put it into a well known memory address so we can jump there later.
+
+           ; we have to apply mask AND 00001000 
+           and al, 0x08 
+           jz data_ready 
+           
+           jmp read_data
+            
+          ret 
+
+   
+   read_data: 
+          mov cx, 0x00
+          mov si, 256 
+      
+          mov dx, 0x1F0 
+          in ax, dx 
+           
+           mov bx, 0x1000
+           mov WORD [bx + cx], ax  
+           inc cx 
+           dec si 
+           jnz read_data
+
+         
+     
    load_kern: 
          ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox. 
          mov dx, 0x3F8
          mov al, 'N'
          out dx, al
+
+         
+         ; low LBA adress
+         mov dx, 0x1F3
+         mov al, 0x01
+         out dx, al 
+
+         ; medium LBA adress
+         mov dx, 0x1F4
+         mov al, 0x00
+         out dx, al
+
+         ; High LBA adress
+         mov dx, 0x1F5
+         mov al, 0x00
+         out dx, al
+
+         ; last 3 bits of lba adress and aditional flags 
+         ; we use 11100000
+         mov dx, 0x1F6
+         mov al, 0xE0
+         out dx, al 
+         ; 00000000
+         ; ^ always one in lba
+
+         ; 00000000
+         ;  ^ 0 one for lba, zero for chs 
+
+
+         ; 00000000
+         ;   ^ always one too
+
+         ; 00000000
+         ;    ^ zero for master one for slave 
+
+          ; 00000000
+         ;      ^^^^ last bits of lba address
+
+      
+         ; sectors to read 1
+         mov dx, 0x1F2
+         mov al, 0x01
+         out dx, al 
+
+
+         ; read command 
+         mov dx, 0x1F7 
+         mov al, 0x20 ; 0x20 for read, 0x30 for write, 0x21 for read ext, 0x31 for write ext 
+         out dx, al 
+
+         call read_data ; read data and put it somewhere well known on memory so we can jump there. 
+
 
          dec ecx 
 
