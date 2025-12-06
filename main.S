@@ -192,14 +192,18 @@ protected_mode_start:
 
    
    read_data: 
-          mov cx, 0x00 ; increment to kernel mem addr 
+          mov ecx, 0x00 ; increment to kernel mem addr 
           mov si, 256 ; 512/2 bytes 
       
           mov dx, 0x1F0 
           in ax, dx ; receive data 
            
-           mov bx, 0x1000
-           mov WORD [bx + cx], ax  
+           mov ebx, 0x1000
+           
+           
+           mov WORD [ebx + ecx], ax  
+           
+           
            inc cx 
            dec si 
            jnz read_data
@@ -257,7 +261,7 @@ protected_mode_start:
          ; 00000000000000000000000000000000
          ;     ^^^^
          ; MASK: 
-         ; 00001111000000000000000000000000
+         ; 00001111 000000000000000000000000
          ;     ^^^^
          ; 0x0F000000
            
@@ -272,7 +276,11 @@ protected_mode_start:
          ; low LBA adress
          mov dx, 0x1F3
          AND ebx, 0x000000FF 
-         mov al, ebx 
+         
+         
+         mov al, bl
+         
+         
          out dx, al 
          mov ebx, edi 
          
@@ -280,7 +288,9 @@ protected_mode_start:
          ; medium LBA adress
          mov dx, 0x1F4
          AND ebx, 0x0000FF00 
-         mov al, ebx 
+         
+         mov al, bl 
+         
          shr ebx, 8 
          
          out dx, al
@@ -291,16 +301,21 @@ protected_mode_start:
          AND ebx, 0x00FF0000 
          shr ebx, 16
          
-         mov al, ebx 
+         mov al, bl
          out dx, al
+         
+         
          mov ebx, edi 
-
+         AND ebx, 0x0F000000 
+         shr ebx, 24 
+        
          ; last 3 bits of lba adress and aditional flags 
          ; we use 11100000 (0xE0)
          ; 1111 0000 
          ; 1111 
          mov dx, 0x1F6
          mov al, 0xE0
+         or al, bl
          out dx, al 
          ; 00000000
          ; ^ always one in lba
