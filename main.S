@@ -198,6 +198,34 @@ protected_mode_start:
             
           ret 
 
+
+
+print_nibble:
+    cmp al, 10
+    jl .num
+    add al, 'A' - 10
+    jmp .done
+.num:
+    add al, '0'
+.done:
+    mov dx, 0x3F8      
+    out dx, al
+    ret
+
+
+print_byte:
+    push ax           
+    mov ah, al         
+    shr al, 4         
+    call print_nibble
+    mov al, ah
+    and al, 0x0F      
+    call print_nibble
+    pop ax
+    ret
+
+
+
    
    read_data: 
          mov dx, 0x3F8
@@ -206,6 +234,14 @@ protected_mode_start:
          
          mov dx, 0x1F0 
          in ax, dx ; receive data 
+         
+         ; high byte
+          mov al, ah
+          call print_byte
+
+         ; low byte
+          mov al, al
+          call print_byte
 
          mov WORD [ebx + ebp], ax  
          add ebp, 2
