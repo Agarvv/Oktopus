@@ -57,7 +57,7 @@ protected_mode_start:
 
 
    ; load kernel 
-   mov ecx, 8185 
+   mov ecx, 2
    call load_kern 
 
 
@@ -123,9 +123,7 @@ protected_mode_start:
    jmp $
 
    disk_status: 
-          mov dx, 0x3F8
-          mov al, 'N'
-          out dx, al
+         
 
           ; first, check if bussy bit is one 
            mov dx, 0x1F7
@@ -143,9 +141,7 @@ protected_mode_start:
            mov dx, 0x1F7
            in al, dx 
 
-           mov dx, 0x3F8
-           mov al, 'N'
-           out dx, al
+         
          
           ; if not one then not bussy, now check if ready bit is one, meaning ready 
           ; 00000000
@@ -154,9 +150,7 @@ protected_mode_start:
           and al, 0x40 
           jz disk_status
 
-          mov dx, 0x3F8
-         mov al, 'J'
-         out dx, al
+       
           
          ; all conditions met, return.
          ret
@@ -179,9 +173,7 @@ protected_mode_start:
            ; now if we are here it mean disk is not bussy anymore so 
            ; we'll check if disk has data ready, if yes, return.
 
-           mov dx, 0x3F8
-           mov al, 'N'
-           out dx, al
+          
 
            ; 00000000
            ;     ^ data request, if 1, then disk has data to transfer, 
@@ -228,9 +220,7 @@ print_byte:
 
    
    read_data: 
-         mov dx, 0x3F8
-         mov al, 'L'
-         out dx, al
+        
          
          mov dx, 0x1F0 
          in ax, dx ; receive data 
@@ -252,13 +242,11 @@ print_byte:
          
      
    load_kern: 
-         mov dx, 0x3F8
-         mov al, 'L'
-         out dx, al
+        
          ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox.
          
          
-         mov edi, 0x00000000 ; lba addr 
+         mov edi, 0x00000001 ; lba addr 
          mov ebx, edi 
          
          ; 00000000000000000000000000000000
@@ -380,10 +368,10 @@ print_byte:
          ; read command 
          mov dx, 0x1F7 
          mov al, 0x20 ; 0x20 for read, 0x30 for write, 0x21 for read ext, 0x31 for write ext 
-         mov dx, 0x3F8
+     
+
          mov bl, al
-         mov al, 'R'
-         out dx, al
+ 
          mov al, bl
          mov dx, 0x1F7
          out dx, al 
