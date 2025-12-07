@@ -4,9 +4,9 @@ org 0x7C00
 
 
 start:
-   mov dx, 0x3F8
-   mov al, 'D'
-   out dx, al
+  ; mov dx, 0x3F8
+  ; mov al, 'D'
+  ; out dx, al
    
    mov ax, 2401h
    int 15h
@@ -23,9 +23,7 @@ start:
    or eax, 1
    mov cr0, eax
 
-   mov dx, 0x3F8
-mov al, 'C'
-out dx, al
+
 
 
    jmp 0x08:protected_mode_start
@@ -46,9 +44,7 @@ protected_mode_start:
    mov byte [edi+1], 0x07     
 
 
-   mov dx, 0x3F8
-   mov al, 'O'
-   out dx, al
+  
   
 
    ; check disk status
@@ -62,9 +58,7 @@ protected_mode_start:
 
 
 
-   mov dx, 0x3F8
-   mov al, 'l'
-   out dx, al
+  
 
    mov edi, 0xB8000
    mov byte [edi+2], 'f'       
@@ -246,7 +240,7 @@ print_byte:
          ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox.
          
          
-         mov edi, 0x00000001 ; lba addr 
+         mov edi, 0x00000000 ; lba addr 
          mov ebx, edi 
          
          ; 00000000000000000000000000000000
