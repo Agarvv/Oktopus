@@ -50,6 +50,53 @@ protected_mode_start:
    mov al, 'O'
    out dx, al
   
+   ; -----------------------------
+   ; Debug print helpers (serial on COM1=0x3F8)
+   ; print_nibble: AL contains 0..15, prints single hex char
+print_nibble:
+   push eax
+   and al, 0x0F
+   cmp al, 10
+   jl .dn_digit
+   add al, 'A' - 10
+   jmp .dn_out
+.dn_digit:
+   add al, '0'
+.dn_out:
+   mov dx, 0x3F8
+   out dx, al
+   pop eax
+   ret
+
+; print_byte_hex: prints AL as two hex chars
+print_byte_hex:
+   push eax
+   push ebx
+   mov bl, al
+   shr al, 4
+   call print_nibble
+   mov al, bl
+   and al, 0x0F
+   call print_nibble
+   pop ebx
+   pop eax
+   ret
+
+; print_word_hex: prints AX as four hex chars (high word then low word)
+print_word_hex:
+   push eax
+   push ebx
+   push edx
+   mov bx, ax
+   mov al, bh
+   call print_byte_hex
+   mov al, bl
+   call print_byte_hex
+   pop edx
+   pop ebx
+   pop eax
+   ret
+
    ; check disk status
    call disk_status 
 
@@ -203,23 +250,19 @@ protected_mode_start:
          mov al, 'L'
          out dx, al
          
-         
-          mov dx, 0x1F0 
-          in ax, dx ; receive data 
-           
-           
-           
-           mov WORD [ebx + ebp], ax  
-           
-           
-           add ebp, 2
-           dec si 
-           jnz read_data
-           
-           mov dx, 0x3F8
-            mov al, 'Ñ'
-            out dx, al
-            
+         mov dx, 0x1F0 
+         in ax, dx ; receive data 
+
+         ; print marker and the 16-bit word read
+         mov dx, 0x3F8
+         mov al, '>'
+         out dx, al
+         call print_word_hex
+
+         mov WORD [ebx + ebp], ax  
+         add ebp, 2
+         dec si 
+         jnz read_data
          ret 
 
          
@@ -288,47 +331,43 @@ protected_mode_start:
          
          ; low LBA adress
          mov dx, 0x1F3
+         mov ebx, edi
          AND ebx, 0x000000FF 
-         
-         
          mov al, bl
-         
-         
+         call print_byte_hex
          out dx, al 
          mov ebx, edi 
          
          
          ; medium LBA adress
          mov dx, 0x1F4
+         mov ebx, edi
          AND ebx, 0x0000FF00 
-         
-         mov al, bl 
-         
          shr ebx, 8 
-         
+         mov al, bl 
+         call print_byte_hex
          out dx, al
          mov ebx, edi 
 
          ; High LBA adress
          mov dx, 0x1F5
+         mov ebx, edi
          AND ebx, 0x00FF0000 
          shr ebx, 16
-         
          mov al, bl
+         call print_byte_hex
          out dx, al
-         
-         
+         mov ebx, edi 
          mov ebx, edi 
          AND ebx, 0x0F000000 
          shr ebx, 24 
         
          ; last 3 bits of lba adress and aditional flags 
          ; we use 11100000 (0xE0)
-         ; 1111 0000 
-         ; 1111 
-         mov dx, 0x1F6
          mov al, 0xE0
          or al, bl
+         call print_byte_hex
+         mov dx, 0x1F6
          out dx, al 
          ; 00000000
          ; ^ always one in lba
@@ -350,12 +389,19 @@ protected_mode_start:
          ; sectors to read (one)
          mov dx, 0x1F2
          mov al, 0x01
+         call print_byte_hex
          out dx, al 
 
 
          ; read command 
          mov dx, 0x1F7 
          mov al, 0x20 ; 0x20 for read, 0x30 for write, 0x21 for read ext, 0x31 for write ext 
+         mov dx, 0x3F8
+         mov bl, al
+         mov al, 'R'
+         out dx, al
+         mov al, bl
+         mov dx, 0x1F7
          out dx, al 
 
          
