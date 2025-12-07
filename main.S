@@ -213,25 +213,26 @@ print_byte:
 
 
    
-   read_data: 
-        
-         
-         mov dx, 0x1F0 
-         in ax, dx ; receive data 
-         
-         ; high byte
-          mov al, ah
-          call print_byte
 
-         ; low byte
-          mov al, al
-          call print_byte
 
-         mov WORD [ebx + ebp], ax  
-         add ebp, 2
-         dec si 
-         jnz read_data
-         ret 
+read_data:
+    in ax, dx               
+
+    
+    mov al, al              
+    call print_byte
+    mov al, ah           
+    call print_byte
+
+   
+    mov [ebx + ebp], al     
+    mov [ebx + ebp + 1], ah 
+    add ebp, 2              
+
+    dec si                 
+    jnz read_data         
+    ret
+
 
          
      
