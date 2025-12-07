@@ -199,6 +199,11 @@ protected_mode_start:
 
    
    read_data: 
+         mov dx, 0x3F8
+         mov al, 'L'
+         out dx, al
+         
+         
           mov dx, 0x1F0 
           in ax, dx ; receive data 
            
@@ -212,15 +217,16 @@ protected_mode_start:
            jnz read_data
            
            mov dx, 0x3F8
-            mov al, 'b'
+            mov al, 'Ñ'
             out dx, al
+            
          ret 
 
          
      
    load_kern: 
          mov dx, 0x3F8
-         mov al, 'x'
+         mov al, 'L'
          out dx, al
          ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox.
          
@@ -278,10 +284,6 @@ protected_mode_start:
            
          
          
-         
-         mov dx, 0x3F8
-         mov al, 'y'
-         out dx, al
 
          
          ; low LBA adress
@@ -356,10 +358,7 @@ protected_mode_start:
          mov al, 0x20 ; 0x20 for read, 0x30 for write, 0x21 for read ext, 0x31 for write ext 
          out dx, al 
 
-         mov dx, 0x3F8
-         mov al, 'z'
-         out dx, al 
-        
+         
         mov ebx, 0x1000 ; base kernel addr 
          mov ebp, 0x00 ; increment to kernel mem addr 
          mov si, 256 ; 512/2 bytes 
@@ -369,9 +368,9 @@ protected_mode_start:
          dec ecx 
     
          jnz load_kern 
-
+         
          mov dx, 0x3F8
-         mov al, 'v'
+         mov al, 'Z'
          out dx, al
 
          ret 
