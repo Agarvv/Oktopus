@@ -6,7 +6,8 @@ section .text
 
 _start:
     mov edi, 0xB8000 
-     mov byte [edi], ':'    
+     mov byte [edi], ':'  
+     jmp $  
 
     
 
