@@ -64,7 +64,7 @@ protected_mode_start:
    mov byte [edi+2], 'f'       
    mov byte [edi+3], 0x07  
    
-   ; jmp 0x08:0x1000
+   jmp 0x08:0x1000
 
 
 
@@ -240,7 +240,7 @@ print_byte:
          ; kernel is 4mb big, so we have to read from sector one to sector 8185 aprox.
          
          
-         mov edi, 0x00000000 ; lba addr 
+         mov edi, 0x00000001 ; lba addr 
          mov ebx, edi 
          
          ; 00000000000000000000000000000000
