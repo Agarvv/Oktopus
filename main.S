@@ -34,6 +34,9 @@ disk_err:
       mov ah, 0x0E
       mov al, 'E'
       int 0x10
+
+      dec ah 
+      jnz disk_err
       
 
 bits 32
