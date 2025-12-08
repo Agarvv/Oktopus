@@ -7,7 +7,10 @@ section .text
 _start:
     mov edi, 0xB8000 
      mov byte [edi], ':'  
-     jmp $  
+    
+     .inf:
+    hlt           
+    jmp .inf     
 
     
 
