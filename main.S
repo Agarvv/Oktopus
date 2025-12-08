@@ -411,24 +411,13 @@ load_kern:
 
 ; low limit (sixteen bits): 0000000000000000
 
+times ($$-$) & 1 db 0  
 dap:
-   ; dap size 
-   db 0x10
-
-   ; reserved 
-   db 0x00 
-   
-   ; sectors to transfer 
-   dw 0x0002
-
-   ; memory offset 
-   dw 0x0000
-   
-   ; segment
-   dw 0x1000
-
-   dd 0x00000001   ; low lba addr 
-   dd 0x00000000   ; high lba addr 
+    db 0x10, 0x00, 0x01, 0x00  
+    dw 0x0000                  
+    dw 0x0100               
+    dd 0x00000001           
+    dd 0x00000000
 
 gdt_start:
 dq 0
