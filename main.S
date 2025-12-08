@@ -30,13 +30,20 @@ mov cr0, eax
 jmp 0x08:protected_mode_start
 
 
-disk_err:  
-      mov ah, 0x0E
-      mov al, 'E'
-      int 0x10
+disk_err:
 
-      dec ah 
-      jnz disk_err
+    mov dx, 0x3F8
+    mov al, 'E'
+    out dx, al
+    
+
+    mov al, ah     
+    call print_byte 
+    
+
+    jmp $
+
+      
       
 
 bits 32
