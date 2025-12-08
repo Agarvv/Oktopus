@@ -66,6 +66,11 @@ mov edi, 0xB8000
 mov byte [edi+2], 'f'
 mov byte [edi+3], 0x07
 
+mov esi, 0x10000   
+mov al, [esi]     
+call print_byte  
+
+
 jmp 0x08:0x10000
 
 ; al can look like this 00000000
