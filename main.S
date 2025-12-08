@@ -1,9 +1,17 @@
-pasame todo el codigo entero corregido org 0x7C00
+org 0x7C00
 
 start:
 ; mov dx, 0x3F8
 ; mov al, 'D'
 ; out dx, al
+
+mov si, dap 
+mov ah, 0x42 ; extended read fn 
+mov dl, 0x80 ; first disk 
+int 0x13
+jc disk_err 
+
+
 
 mov ax, 2401h
 int 15h
@@ -20,6 +28,13 @@ or eax, 1
 mov cr0, eax
 
 jmp 0x08:protected_mode_start
+
+
+disk_err:  
+      mov ah, 0x0E
+      mov al, 'E'
+      int 0x10
+      
 
 bits 32
 protected_mode_start:
@@ -46,7 +61,7 @@ mov edi, 0xB8000
 mov byte [edi+2], 'f'
 mov byte [edi+3], 0x07
 
-jmp 0x08:0x1000
+jmp 0x08:0x10000
 
 ; al can look like this 00000000
 ; 00000000
@@ -390,6 +405,25 @@ load_kern:
 ; low base (sixteen bits): 0000000000000000
 
 ; low limit (sixteen bits): 0000000000000000
+
+dap:
+   ; dap size 
+   db 0x10
+
+   ; reserved 
+   db 0x00 
+   
+   ; sectors to transfer 
+   dw 0x0002
+
+   ; memory offset 
+   dw 0x0000
+   
+   ; segment
+   dw 0x1000
+
+   dd 0x00000001   ; low lba addr 
+   dd 0x00000000   ; high lba addr 
 
 gdt_start:
 dq 0
