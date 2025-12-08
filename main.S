@@ -32,18 +32,48 @@ jmp 0x08:protected_mode_start
 
 disk_err:
 
-    mov dx, 0x3F8
+    mov ah, 0x0E
     mov al, 'E'
+    int 0x10
+    
+
+    mov al, ah
+    call print_byte
+    
+   
+    mov dx, 0x3F8
+    mov al, ' '
+    out dx, al
+    mov al, '-'
+    out dx, al
+    mov al, ' '
     out dx, al
     
-
-    mov al, ah     
-    call print_byte 
+   
+    mov al, ah
+    call .print_hex_screen
     
-
     jmp $
 
-      
+.print_hex_screen:
+    push ax
+    mov cl, al
+    shr al, 4
+    call .nibble
+    mov al, cl
+    and al, 0x0F
+    call .nibble
+    pop ax
+    ret
+.nibble:
+    add al, '0'
+    cmp al, '9'
+    jle .ok
+    add al, 7
+.ok:
+    mov ah, 0x0E
+    int 0x10
+    ret
       
 
 bits 32
