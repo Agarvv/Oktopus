@@ -56,11 +56,11 @@ mov byte [edi], 'U'
 mov byte [edi+1], 0x07
 
 ; check disk status
-call disk_status
+;call disk_status
 
 ; load kernel
-mov ecx, 2
-call load_kern
+;mov ecx, 2
+;call load_kern
 
 mov edi, 0xB8000
 mov byte [edi+2], 'f'
