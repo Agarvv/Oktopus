@@ -70,7 +70,7 @@ mov esi, 0x10000
 mov al, [esi]     
 call print_byte  
 
-jmp far [jmp_ptr]
+jmp dword 0x08:0x0010000
 
 ; al can look like this 00000000
 ; 00000000
@@ -415,9 +415,7 @@ load_kern:
 
 ; low limit (sixteen bits): 0000000000000000
 
-jmp_ptr:
-    dd 0x0010000    
-    dw 0x0008       
+ 
 
 
 times ($$-$) & 1 db 0  
