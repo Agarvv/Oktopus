@@ -1,4 +1,4 @@
-nasm -f bin main.S -o main.bin
+nasm -f bin main.S -o main.bin 
 rm f.img 
 touch f.img 
 sudo dd if=main.bin of=f.img bs=512 conv=notrunc
