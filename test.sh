@@ -14,3 +14,5 @@ sudo dd if=kernel/main.bin of=f.img seek=1 bs=512 conv=notrunc
 qemu-system-x86_64 -hda f.img -display gtk -serial stdio
 
 qemu-system-x86_64 -drive file=f.img,format=raw,if=ide -display gtk -serial stdio
+
+qemu-system-x86_64 -hda f.img -nographic -serial mon:stdio

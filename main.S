@@ -459,7 +459,7 @@ dap:
     dw 0x1000     ; segment = 0x1000 → REAL MODE addr = 0x10000
     dd 1          ; LBA low
     dd 0          ; LBA high
-
+   
 
 gdt_start:
 dq 0
