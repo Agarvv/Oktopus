@@ -452,11 +452,14 @@ load_kern:
 
 times ($$-$) & 1 db 0  
 dap:
-    db 0x10, 0x00, 0x01, 0x00  
-    dw 0x0000                  
-    dw 0x0100               
-    dd 0x00000001           
-    dd 0x00000000
+    db 0x10       ; size
+    db 0x00       ; reserved
+    dw 1          ; number of sectors
+    dw 0x0000     ; offset = 0
+    dw 0x1000     ; segment = 0x1000 → REAL MODE addr = 0x10000
+    dd 1          ; LBA low
+    dd 0          ; LBA high
+
 
 gdt_start:
 dq 0
