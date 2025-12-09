@@ -70,7 +70,7 @@ mov esi, 0x10000
 mov al, [esi]     
 call print_byte  
 
-jmp dword 0x08:0x0010000
+jmp 0x08:0x0010000
 
 ; al can look like this 00000000
 ; 00000000
