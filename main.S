@@ -5,6 +5,11 @@ start:
 ; mov al, 'D'
 ; out dx, al
 
+
+mov ah, 0x0E
+mov al, 'A'
+int 0x10
+
 mov si, dap 
 mov ah, 0x42 ; extended read fn 
 mov dl, 0x80 ; first disk 
@@ -12,12 +17,20 @@ int 0x13
 jc disk_err 
 
 
+mov ah, 0x0E
+mov al, 'B'
+int 0x10
 
 mov ax, 2401h
 int 15h
 
 cli
 lgdt [gdt_des]
+
+
+mov ah, 0x0E
+mov al, 'C'
+int 0x10
 
 mov ah, 0x0E
 mov al, 'H'
@@ -66,11 +79,45 @@ mov edi, 0xB8000
 mov byte [edi+2], 'f'
 mov byte [edi+3], 0x07
 
+
+mov esi, 0x10000
+
+mov ecx, 16          
+mov edi, 0xB8000+160  
+
+.debug_loop:
+    mov al, [esi]    
+    mov bl, al     
+    shr bl, 4
+    and bl, 0x0F
+    add bl, '0'
+    cmp bl, '9'
+    jle .ok1
+    add bl, 7
+.ok1:
+    mov byte [edi], bl
+    mov byte [edi+1], 0x07
+
+    mov bl, al
+    and bl, 0x0F
+    add bl, '0'
+    cmp bl, '9'
+    jle .ok2
+    add bl, 7
+.ok2:
+    mov byte [edi+2], bl
+    mov byte [edi+3], 0x07
+
+    add esi, 1
+    add edi, 4
+    loop .debug_loop
+
 mov esi, 0x10000   
 mov al, [esi]     
 call print_byte  
 
 jmp 0x08:0x0010000
+
 
 ; al can look like this 00000000
 ; 00000000
