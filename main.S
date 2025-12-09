@@ -6,20 +6,12 @@ start:
 ; out dx, al
 
 
-mov ah, 0x0E
-mov al, 'A'
-int 0x10
-
 mov si, dap 
 mov ah, 0x42 ; extended read fn 
 mov dl, 0x80 ; first disk 
 int 0x13
 jc disk_err 
 
-
-mov ah, 0x0E
-mov al, 'B'
-int 0x10
 
 mov ax, 2401h
 int 15h
@@ -28,13 +20,6 @@ cli
 lgdt [gdt_des]
 
 
-mov ah, 0x0E
-mov al, 'C'
-int 0x10
-
-mov ah, 0x0E
-mov al, 'H'
-int 0x10
 
 mov eax, cr0
 or eax, 1
