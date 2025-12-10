@@ -100,9 +100,9 @@ mov edi, 0xB8000+160
     add edi, 4
     loop .debug_loop
 
-mov esi, 0x10000   
-mov al, [esi]     
-call print_byte  
+;mov esi, 0x10000   
+;mov al, [esi]     
+;call print_byte  
 
 jmp 0x08:0x0010000
 
