@@ -18,5 +18,4 @@ qemu-system-x86_64 -drive file=f.img,format=raw,if=ide -display gtk -serial stdi
 
 qemu-system-x86_64 \
     -drive file=f.img,format=raw \
-        -nographic \
             -serial mon:stdio
