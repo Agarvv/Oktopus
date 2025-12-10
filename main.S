@@ -104,7 +104,7 @@ mov edi, 0xB8000+160
 ;mov al, [esi]     
 ;call print_byte  
 
-jmp 0x08:0x0010000
+jmp 0x08:0x10000
 
 
 times ($$-$) & 1 db 0  
