@@ -3,7 +3,7 @@
 
 int _start() {
      unsigned short *video_memory = (unsigned short *)VIDEO_MEMORY;
-     *video_memory = 0x611F; 
+     *video_memory = 0x1F61;  // blue, 'a'
 
     while(1) {} 
 }
