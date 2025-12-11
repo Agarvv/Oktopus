@@ -15,7 +15,17 @@ qemu-system-x86_64 -hda f.img -nographic -serial stdio
 
 qemu-system-x86_64 -drive file=f.img,format=raw,if=ide -display gtk -serial stdio
 
-
 qemu-system-x86_64 \
     -drive file=f.img,format=raw \
             -serial mon:stdio
+
+            // x = (rows * rows_size) + col
+
+    int offset = (row * VIDEO_ROWS) + col;
+    unsigned short *addr = (unsigned short *)VIDEO_MEMORY + offset;
+    c = (unsigned short)c;
+    f = (unsigned short)f;
+
+    *addr = (f << 8) | c;
+
+    return 0;

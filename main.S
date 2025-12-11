@@ -50,7 +50,7 @@ mov es, ax ; extra segment
 mov fs, ax ; fs segment
 mov gs, ax ; gs segment
 mov ss, ax ; stack segment
-mov esp, 0x80000 ; stack poitner 
+mov esp, 0x400000 ; stack poitner 
 
 mov edi, 0xB8000
 mov byte [edi], 'U'
