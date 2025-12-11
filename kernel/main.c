@@ -2,25 +2,39 @@
 #define VIDEO_ROWS 25 
 #define VIDEO_COLS 80
 
-void printc(int col, int row, char c, char f) {
-   // x = (rows * rows_size) + col 
 
-    int offset = (row * VIDEO_ROWS) + col;
-    unsigned short *addr = (unsigned short *)VIDEO_MEMORY + offset;
-    c = (unsigned short)c; 
-    f = (unsigned short)f; 
-
-    *addr = (f << 8) | c; 
-
-    return 0; 
-}
+int printc(int, int, char, char); 
 
 
 int _start() {
      //unsigned short *video_memory = (unsigned short *)VIDEO_MEMORY;
     // *video_memory = 0x1F61;  // blue, 'a'
-    printc(1, 1, 'A', 0x1F); 
-
-    while(1) {} 
+    printc(0, 0, 'O', 0x1F); 
+    printc(0, 1, 'k', 0x1F); 
+    printc(0, 2, 't', 0x1F); 
+    printc(0, 3, 'o', 0x1F); 
+    printc(0, 4, 'p', 0x1F);
+    printc(0, 5, 'u', 0x1F);
+    printc(0, 6, 's', 0x1F); 
+    while(1) {}   
 }
 
+int printc(int row, int col, char c, char f) {
+    int offset = (row * VIDEO_ROWS) + col;
+    // 00000 row 
+    // 00000
+    // 00000    
+    // 00000
+    // 00000
+    // col 
+
+    unsigned short *addr = (unsigned short *)VIDEO_MEMORY + offset;
+
+    c = (unsigned short)c;
+
+    f = (unsigned short)f;
+
+    *addr = (f << 8) | c;
+
+    return 0; 
+}
