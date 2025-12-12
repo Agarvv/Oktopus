@@ -25,7 +25,7 @@ int printc(int row, int col, char c, char f) {
     // 00000
     // 00000    
     // 00000
-    // 00000
+    // -00001
     // col 
 
     unsigned short *addr = (unsigned short *)VIDEO_MEMORY + offset;
