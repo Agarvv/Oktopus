@@ -1,7 +1,7 @@
 #define VIDEO_MEMORY 0xB8000
 #define VIDEO_ROWS 25 
 #define VIDEO_COLS 80
-
+#include "kernel/idt/idt.c"
 
 int printc(int, int, char, char); 
 
@@ -20,6 +20,9 @@ int _start() {
 }
 
 int printc(int row, int col, char c, char f) {
+    idt_start(); // loads a idt structure and puts some interrupts 
+    
+    
     int offset = (row * VIDEO_ROWS) + col;
     // 00000 row 
     // 00000
