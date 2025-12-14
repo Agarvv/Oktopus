@@ -1,4 +1,4 @@
-#include <include/kernel/idt/idt.h> 
+#include <kernel/int/idt.h> 
 
 void add_idt_handler(idt_index, unsigned short gdt_selector, unsigned char attributes, 
     unsigned short low_isr,
@@ -28,7 +28,7 @@ void idt_start() {
     idt_r.idt_start = &idt; 
     
     __asm__ volatile(
-        "lidt, (%0)"
+       " lidt, (%0)"
         : 
         : "r" (&idt_r)
         : "memory" 

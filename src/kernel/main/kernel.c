@@ -1,7 +1,7 @@
 #define VIDEO_MEMORY 0xB8000
 #define VIDEO_ROWS 25 
 #define VIDEO_COLS 80
-#include "kernel/idt/idt.c"
+#include "../idt/idt.c"
 
 int printc(int, int, char, char); 
 
