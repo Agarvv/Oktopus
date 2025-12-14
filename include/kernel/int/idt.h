@@ -1,10 +1,10 @@
-#define IDT_SIZE 256
+ #define IDT_SIZE 256
 
-struct idt_entry __attribute__((packed)) {
+struct idt_entry {
     // lower bits of isr (16 bits)
     unsigned short isr_low; 
     
-    //gdt selector (16 bits)
+    // gdt selector (16 bits)
     unsigned short gdt_selector;
     
     // reserved for future use (8 bits)
@@ -15,27 +15,23 @@ struct idt_entry __attribute__((packed)) {
     
     // high bits of isr (16 bits)
     unsigned short isr_high; 
-}; 
+} __attribute__((packed)); 
 
-struct idt_entry idt[IDT_SIZE]; 
+extern struct idt_entry idt[IDT_SIZE]; 
 
 struct idtr {
     unsigned short idt_size; 
-    unsigned int idt_start; 
+    struct idt_entry (*idt_start)[IDT_SIZE]; 
 }; 
 
 void idt_start(); 
 
-void add_idt_handler,
-(  
-idt_index,
 
-unsigned short gdt_selector, 
+void add_idt_handler(int idt_index,
+                     unsigned short gdt_selector, 
+                     unsigned char attributes,
+                     unsigned short isr_low, 
+                     unsigned short isr_high); 
 
-unsigned char attributes,
+void isr_divide_by_zero();
 
-unsigned char isr_low, 
-unsigned char isr_high 
-); 
-
-void isr_divide_by_zero(); 

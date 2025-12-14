@@ -20,7 +20,7 @@ CFLAGS  := -target i686-none-elf -m32 -ffreestanding \
            -fno-builtin -fno-stack-protector -nostdlib -O0 \
            -I$(INC_DIR)
 
-LDFLAGS := -m elf_i386 -T linker.ld
+LDFLAGS := -m elf_i386 -T src/kernel/l.ld
 
 
 SRC := $(shell find $(SRC_DIR) -name "*.c")
