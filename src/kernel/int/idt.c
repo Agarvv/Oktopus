@@ -23,11 +23,11 @@ void isr_divide_by_zero() {
 }
 
 void idt_start() {
-    struct idtr idt_r;
-    idt_r.idt_size = sizeof(idt) - 1; 
-    idt_r.idt_start = &idt; 
+      struct idtr idt_r;
+     idt_r.idt_size = sizeof(idt) - 1; 
+      idt_r.idt_start = &idt; 
     
-   
+  /* 
     add_idt_handler(0, 0x0008, 0x8E, 
         (unsigned short)&isr_divide_by_zero, 
         (unsigned short)(((unsigned long)&isr_divide_by_zero) >> 16)  
@@ -38,6 +38,6 @@ void idt_start() {
         : 
         : "r" (&idt_r)
         : "memory" 
-    );
+    ); */
 }
 
