@@ -73,7 +73,7 @@ $(IMG): $(BOOTLOADER) $(KERNEL_BIN)
 
 run: $(IMG)
 	@echo "=== qemu execution  ==="
-	$(QEMU) -drive format=raw,file=$(IMG)
+	$(QEMU) -drive format=raw,file=$(IMG) -s
 
 clean:
 	rm -rf $(BUILD)

@@ -5,6 +5,9 @@ start:
 ; mov al, 'D'
 ; out dx, al
 
+mov al, 0xFF    
+out 0x21, al    
+out 0xA1, al    ; desactivate pic 
 
 mov si, dap ; bios uses dap data structure to perform disk operations
 mov ah, 0x42 ; extended read fn 
@@ -97,7 +100,7 @@ mov edi, 0xB8000+160
     add esi, 1
     add edi, 4
     loop .debug_loop  
-
+sti 
 jmp 0x08:0x10000
 
 
@@ -105,7 +108,7 @@ times ($$-$) & 1 db 0
 dap:
     db 0x10       ; size
     db 0x00       ; reserved
-    dw 2          ; number of sectors
+    dw 3          ; number of sectors
     dw 0x0000     ; offset = 0
     dw 0x1000     ; segment = 0x1000 → REAL MODE addr = 0x10000
     dd 1          ; LBA low

@@ -21,7 +21,7 @@ extern struct idt_entry idt[IDT_SIZE];
 
 struct idtr {
     unsigned short idt_size; 
-    struct idt_entry (*idt_start)[IDT_SIZE]; 
+    unsigned int idt_start; 
 }; 
 
 void idt_start(); 

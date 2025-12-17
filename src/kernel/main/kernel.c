@@ -16,22 +16,24 @@ void _start() {
     printc(0, 3, 'o', 0x1F); 
     printc(0, 4, 'p', 0x1F);
     printc(0, 5, 'u', 0x1F);
-    printc(0, 6, 's', 0x1F); 
-    idt_start();
+    printc(0, 6, 's', 0x1F);  
+    idt_start();  
+   /* asm volatile(
+        "xorl %%eax, %%eax\n\t"  
+        "divl %%eax"             
+        : : : "eax", "edx"
+    ); */ 
     while(1) {}   
 }
 
 int printc(int row, int col, char c, char f) {
-   //  idt_start(); // loads a idt structure and puts some interrupts 
+  
     
     
     int offset = (row * VIDEO_ROWS) + col;
     // 00000 row 
     // 00000
-    // 00000    
-    // 00000
-    // -00001
- 
+    // 00000   
 
     unsigned short *addr = (unsigned short *)VIDEO_MEMORY + offset;
 
