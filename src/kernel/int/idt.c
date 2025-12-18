@@ -30,7 +30,8 @@ void isr_divide_by_zero() {
 void idt_start() {
     struct idtr idt_r;
      idt_r.idt_size = sizeof(idt) - 1; 
-    idt_r.idt_start = 0xffffffff; 
+     idt_r.idt_start = &idt; 
+    
     
   
     add_idt_handler(0, 0x0008, 0x8E, 
@@ -44,7 +45,7 @@ void idt_start() {
         : "r" (&idt_r)
         : "memory" 
     ); 
-   //  printg(1, 2, 'e', 0x1F);
+
 }
 
 int printg(int row, int col, char c, char f) {
