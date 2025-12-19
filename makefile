@@ -6,6 +6,8 @@ SRC_DIR := src/kernel
 INC_DIR := include
 BUILD   := build
 OBJ_DIR := $(BUILD)/obj
+ASM_OBJ := src/kernel/asm/stub/stub.o
+
 
 KERNEL_ELF := $(BUILD)/kernel.elf
 KERNEL_BIN := $(BUILD)/kernel.bin
@@ -40,8 +42,10 @@ endif
 OTHER_SRC := $(filter-out $(KERNEL_MAIN), $(ALL_SRC))
 
 
-OBJ := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(KERNEL_MAIN)) \
+OBJ := $(ASM_OBJ) \
+       $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(KERNEL_MAIN)) \
        $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(OTHER_SRC))
+
 
 $(info === objects  ===)
 $(foreach obj,$(OBJ),$(info $(obj)))
@@ -51,7 +55,8 @@ all: $(IMG)
 $(KERNEL_ELF): $(OBJ)
 	@echo "=== kernel linking... ==="
 	$(LD) $(LDFLAGS) $(OBJ) -o $@
-	@echo "=== entry point v  ==="
+
+	@echo "=== entry point === "
 	@objdump -f $@ | grep "start address"
 
 $(KERNEL_BIN): $(KERNEL_ELF)

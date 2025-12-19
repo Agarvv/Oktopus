@@ -3,6 +3,7 @@
 
  struct idt_entry idt[IDT_SIZE]; 
  int printg(int, int, char, char); 
+ extern void isr_stub(void);  
 
 
 void add_idt_handler(int idt_index, unsigned short gdt_selector, unsigned char attributes, 
@@ -21,6 +22,9 @@ void add_idt_handler(int idt_index, unsigned short gdt_selector, unsigned char a
   //  printg(1, 1, 'u', 0x1F);
 }
 
+void isr_handler() {
+  printg(1, 6, 'E', 0x1F); 
+}
 
 void isr_divide_by_zero() {   
    printg(1, 6, 'E', 0x1F); 
@@ -35,8 +39,8 @@ void idt_start() {
     
   
     add_idt_handler(0, 0x0008, 0x8E, 
-        (unsigned short)&isr_divide_by_zero, 
-        (unsigned short)(((unsigned long)&isr_divide_by_zero) >> 16)  
+        (unsigned short)&isr_stub, 
+        (unsigned short)(((unsigned long)&isr_stub) >> 16)  
     );
 
     __asm__ volatile(
