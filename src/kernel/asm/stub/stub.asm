@@ -1,7 +1,8 @@
+global isr_stub 
 extern isr_handler 
 
 isr_stub:
-   pusha 
-   call isr_handler 
-   popa
-   iret 
+    popa 
+    call isr_handler 
+    pusha 
+    iret 
