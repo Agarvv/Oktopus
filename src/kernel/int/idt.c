@@ -3,7 +3,8 @@
 
  struct idt_entry idt[IDT_SIZE]; 
  int printg(int, int, char, char); 
- extern void isr_stub(void);  
+ extern void isr_dbz_stub(void);  // divide by zero stub 
+ extern void isr_ioe_stub(void); // invalid opcode exception stub
 
 
 void add_idt_handler(int idt_index, unsigned short gdt_selector, unsigned char attributes, 
@@ -19,16 +20,14 @@ void add_idt_handler(int idt_index, unsigned short gdt_selector, unsigned char a
     entry.isr_high = high_isr; 
     
     idt[idt_index] = entry; 
-  //  printg(1, 1, 'u', 0x1F);
 }
 
-void isr_handler() {
+void isr_divide_by_zero() {
   printg(1, 6, 'E', 0x1F); 
-}
+} 
 
-void isr_divide_by_zero() {   
-   printg(1, 6, 'E', 0x1F); 
-   asm volatile ("iret"); 
+void isr_invalid_opcode() { 
+   printg(1, 6, 'I', 0x1F); 
 }
 
 void idt_start() {
@@ -39,8 +38,13 @@ void idt_start() {
     
   
     add_idt_handler(0, 0x0008, 0x8E, 
-        (unsigned short)&isr_stub, 
-        (unsigned short)(((unsigned long)&isr_stub) >> 16)  
+        (unsigned short)&isr_dbz_stub, 
+        (unsigned short)(((unsigned long)&isr_dbz_stub) >> 16)  
+    ); 
+
+    add_idt_handler(6, 0x0008, 0x8E, 
+        (unsigned short)&isr_ioe_stub, 
+        (unsigned short)(((unsigned long)&isr_ioe_stub) >> 16)  
     );
 
     __asm__ volatile(

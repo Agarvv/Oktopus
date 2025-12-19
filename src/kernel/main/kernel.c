@@ -18,12 +18,8 @@ void _start() {
     printc(0, 5, 'u', 0x1F);
     printc(0, 6, 's', 0x1F);  
     idt_start();  
-    asm volatile(
-        "xorl %%eax, %%eax\n\t"  
-        "divl %%eax"             
-        : : : "eax", "edx"
-    );   
-   
+    asm volatile("ud2");  
+
     while(1) {}   
 }
 

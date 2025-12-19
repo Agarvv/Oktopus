@@ -34,4 +34,4 @@ void add_idt_handler(int idt_index,
                      unsigned short isr_high); 
 
 void isr_divide_by_zero();
-
+void isr_invalid_opcode(); 
