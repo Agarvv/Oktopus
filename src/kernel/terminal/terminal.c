@@ -10,4 +10,6 @@ void clear_terminal() {
         }
         
     }
-}
+} 
+
+
