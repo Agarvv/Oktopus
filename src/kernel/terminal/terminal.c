@@ -1,4 +1,4 @@
-#include <kernel/drivers/vga/vga.h> 
+#include <kernel/drivers/video/vga/vga.h> 
 
 void clear_terminal() {
     for(int rows = 0; rows < VIDEO_ROWS; rows++) 

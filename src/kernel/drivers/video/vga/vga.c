@@ -1,11 +1,11 @@
-#include <kernel/drivers/vga/vga.h> 
+#include <kernel/drivers/video/vga/vga.h> 
 
 
 int putchar(int row, int col, char c, char f) {
     
     int offset = (row * VIDEO_ROWS) + col;
 
-    unsigned short *addr = (unsigned short *)VIDEO_MEMORY + offset;
+    unsigned short *addr = (unsigned short *)VGA_TEXT_VIDEO_MEMORY + offset;
 
     c = (unsigned short)c;
 
@@ -21,7 +21,7 @@ int puts(char str[], int lenstr) {
     int col = 0;
     
     for(int i = 0; i < lenstr; i++) {
-        putchar(row, col); 
+        putchar(row, col, str[i], 0x1F); 
         col++; 
     }
 }
