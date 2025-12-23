@@ -4,22 +4,112 @@ org 0x7C00
 section .bss 
 align 4096
 page_directory: 
-    ; page directory entry format: 
+   ; page directory entry format:
 
     ; 00000000000000000000 000000000000
-    ; ^^^^^^^^^^^^^^^^^^^^ 
-    ; PTA (page table addr) 
-    ; and the other bits are just flags. .
+    ; ^^^^^^^^^^^^^^^^^^^^
+    ; page table address (bits 31–12)
 
-    ; format of the flags: 
-    ; 0000000000000
-    ; ^ present in memory 
+    ; and the other bits are just flags
 
-    
+
+    ; format of the flags:
+
+    ; 000000000000
+    ;            ^
+    ;            present in memory
+
+    ; 000000000000
+    ;           ^
+    ;           1 for read and write, 0 for read only
+
+    ; 000000000000
+    ;          ^
+    ;          0 for kernel access, 1 for user access
+
+    ; 000000000000
+    ;         ^
+    ;         page write through
+
+    ; 000000000000
+    ;        ^
+    ;        page cache disable
+
+    ; 000000000000
+    ;       ^
+    ;       accessed
+
+    ; 000000000000
+    ;      ^
+    ;      reserved
+
+    ; 000000000000
+    ;     ^
+    ;     page size
+
+    ; 000000000000
+    ; ^^^^
+    ;  reserved
+
     resd 1024
 
 align 4096 
 page_table: 
+   ; page table entry format:
+
+    ; 00000000000000000000 000000000000
+    ; ^^^^^^^^^^^^^^^^^^^^
+    ; physical page address 
+
+    ; and the other bits are just flags.
+
+
+    ; format of the flags:
+
+    ; 000000000000
+    ;            ^
+    ;            present in memory
+
+    ; 000000000000
+    ;           ^
+    ;           1 for read and write, 0 for read only
+
+    ; 000000000000
+    ;          ^
+    ;          0 for kernel access, 1 for user access
+
+    ; 000000000000
+    ;         ^
+    ;         page write through
+
+    ; 000000000000
+    ;        ^
+    ;        page cache disable
+
+    ; 000000000000
+    ;       ^
+    ;       accessed
+
+    ; 000000000000
+    ;      ^
+    ;      dirty (set by CPU when written)
+
+    ; 000000000000
+    ;     ^
+    ;     PAT (Page Attribute Table)
+
+    ; 000000000000
+    ;    ^
+    ;    global page (prevents TLB flush)
+
+    ; 000000000000
+    ; ^^^^
+    ; bits 9–11 - reserved / ignored (set to 0)
+
+
+
+
+
     resd 1024
 
 section .text 
@@ -132,11 +222,11 @@ mov edi, 0xB8000+160
     ; 00000000 00000000 00000000 00000000 
     ; ^^^^^^^^ ^^^^^^^^ ^^^^ 
     ; Those are the bits that contain the PDBA. 
-    push eax 
-    mov eax, cr3 
+    ;push eax 
+    ;mov eax, cr3 
      
 
-    pop eax 
+    ;pop eax 
     
 
     ; in order to enable paging, i need to  
