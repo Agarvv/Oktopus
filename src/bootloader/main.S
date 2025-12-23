@@ -1,5 +1,28 @@
 org 0x7C00
 
+
+section .bss 
+align 4096
+page_directory: 
+    ; page directory entry format: 
+
+    ; 00000000000000000000 000000000000
+    ; ^^^^^^^^^^^^^^^^^^^^ 
+    ; PTA (page table addr) 
+    ; and the other bits are just flags. .
+
+    ; format of the flags: 
+    ; 0000000000000
+    ; ^ present in memory 
+
+    
+    resd 1024
+
+align 4096 
+page_table: 
+    resd 1024
+
+section .text 
 start:
 ; mov dx, 0x3F8
 ; mov al, 'D'
