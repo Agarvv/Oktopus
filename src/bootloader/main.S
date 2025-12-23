@@ -55,7 +55,7 @@ mov gs, ax ; gs segment
 mov ss, ax ; stack segment
 mov esp, 0x400000 ; stack poitner 
 
-lidt [idt_r]
+
 
 
 
@@ -100,8 +100,48 @@ mov edi, 0xB8000+160
     add esi, 1
     add edi, 4
     loop .debug_loop  
-sti 
-jmp 0x08:0x10000
+
+    ; before enabling paging, i have to 
+    ; configure cr3 register so this 
+    ; can point to the page directory base addr. 
+
+    ; cr3 register may look sort of: 
+    ; 00000000 00000000 00000000 00000000 
+    ; ^^^^^^^^ ^^^^^^^^ ^^^^ 
+    ; Those are the bits that contain the PDBA. 
+    push eax 
+    mov eax, cr3 
+     
+
+    pop eax 
+    
+
+    ; in order to enable paging, i need to  
+    ; set bit 31 "paging enable" to 1. 
+    ; 00000000 00000000 00000000 00000000 
+    ; ^ 
+    ; PG (paging enable) 
+
+    ; mask: OR with 10000000 00000000 00000000 00000000
+    ; (0x80000000)
+
+    ;push eax 
+    ;mov eax, cr0 
+    ;OR eax, 0x80000000 
+    ;mov cr0, eax 
+    ;pop eax 
+
+    sti 
+    jmp 0x08:0x10000
+
+
+
+
+
+
+
+
+
 
 
 times ($$-$) & 1 db 0  
@@ -139,51 +179,8 @@ gdt_end:
 gdt_des:
 dw gdt_end - gdt_start - 1
 dd gdt_start
-
-isr_dividezero:
-     pusha 
-     ; handler here      
-     popa 
-     iret 
-
-
-idt:
- dw isr_dividezero ; lower bits of interrupt service routine 
- dw 0x0008 ; gdt selector 
- db 0x00 ; reserved for future use 
- db 0x00 ; attributes : 00000000
-         ;              ^ 
-         ;              present (in most of cases one) 
-         
-         ;              00000000
-         ;               ^^ 
-         ;               privilege level (0 kernel, 3 user) 
-         
-         ;              00000000
-         ;                 ^ 
-         ;                 reserved for future use (zero always) 
-         
-         ;              00000000
-         ;                  ^^^^ ; gate type 
-
-         ;              0x5 task gate, 
-         ;              0x6 Interrupt gate, 
-         ;              0x7 Trap gate, 
-         ;              0xE Interrupt gate (32 bitd) 
-         ;              0xF trap gate (32 bit) 
-         ;              0xC call gate (32 bit) 
-
- dw isr_dividezero ; high bits of intrrupt service routine
-
-idt_en:
-
-
-
-idt_r:
-dw idt_en - idt - 1 
-dd idt 
-idt_r_end:
-
+ 
+   
 
 
 
