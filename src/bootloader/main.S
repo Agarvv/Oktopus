@@ -247,8 +247,8 @@ mov edi, 0xB8000+160
     sti 
     jmp 0x08:0x10000
 
-
-
+paging_init:
+    
 
 
 
