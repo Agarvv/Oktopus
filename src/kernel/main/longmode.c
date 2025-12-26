@@ -26,7 +26,7 @@ void enable_long_mode() {
 }
 
 void long_mode_start() {
-  enable_physical_addr_extension(); 
   enable_four_level_paging(); 
+  enable_physical_addr_extension(); 
   enable_long_mode(); 
 }
