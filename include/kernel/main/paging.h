@@ -1,4 +1,4 @@
-unsigned int page_map_level_four[1024] __attribute__((aligned(4096)));
+unsigned long long page_map_level_four[512] __attribute__((aligned(4096)));
 // Bit 0: Present
 // Bit 1: Read/Write
 // Bit 2: User/Supervisor
@@ -11,7 +11,7 @@ unsigned int page_map_level_four[1024] __attribute__((aligned(4096)));
 // Bit 31: NX (No Execute)
 // 0 00000000000 00000000000000000000 000000 000011
 
-unsigned int page_directory_pointer_table[1024] __attribute__((aligned(4096)));
+unsigned long long page_directory_pointer_table[512] __attribute__((aligned(4096)));
 // Bit 0: Present
 // Bit 1: Read/Write
 // Bit 2: User/Supervisor
@@ -26,7 +26,7 @@ unsigned int page_directory_pointer_table[1024] __attribute__((aligned(4096)));
 // Bit 31: NX (No Execute)
 //  0 0000000 00000000000000000000 0000 00000011
 
-unsigned int page_directory[1024] __attribute__((aligned(4096)));
+unsigned long long page_directory[512] __attribute__((aligned(4096)));
 // Bit 0: Present
 // Bit 1: Read/Write
 // Bit 2: User/Supervisor
@@ -41,7 +41,7 @@ unsigned int page_directory[1024] __attribute__((aligned(4096)));
 // Bit 31: NX (No Execute)
 //  0 0000000 00000000000000000000 0000 00000011
 
-unsigned int page_table[1024] __attribute__((aligned(4096)));
+unsigned long long page_table[512] __attribute__((aligned(4096)));
 // Bit 0: Present
 // Bit 1: Read/Write
 // Bit 2: User/Supervisor

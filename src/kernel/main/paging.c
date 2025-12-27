@@ -23,5 +23,7 @@ void enable_four_level_paging() {
     : "r"(pml4_addr)
     : "eax", "memory"
    );
+   
+   
 }
  
