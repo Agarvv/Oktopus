@@ -11,7 +11,7 @@ void _start() {
     
     long_mode_start(); // Paging Config and Long mode Start 
     
-    puts("Oktopus", 8); // Print "Oktopus" in clean terminal 
+  //  puts("Oktopu", 7); // Print "Oktopus" in clean terminal 
 
     while(1) {}   
 }

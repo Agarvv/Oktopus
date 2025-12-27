@@ -1,10 +1,11 @@
 #include <kernel/main/longmode.h>
-// #include <kernel/main/paging.h>
-
+#include <kernel/main/paging.h>
+#include <kernel/drivers/video/vga/vga.h>
 
 
 void enable_physical_addr_extension() {
     
+
   unsigned long long pd_addr = (unsigned long long)&page_directory << 12; 
 	page_directory_pointer_table[0] = 0x0000000000000001 | pd_addr;
   
@@ -23,7 +24,7 @@ void enable_physical_addr_extension() {
     : "eax", "memory"
    );
    
-   
+
 
   // to enable PAE, i have to set bit 5 of CR4 register to 1. 
     asm volatile(
@@ -36,6 +37,7 @@ void enable_physical_addr_extension() {
 
 
 void enable_long_mode() {
+  puts("human", 6); 
   unsigned long long pdpt_addr = (unsigned long long)&page_directory_pointer_table << 12; 
 	page_map_level_four[0] = 0x0000000000000001 | pdpt_addr;  
 	
@@ -60,7 +62,12 @@ void enable_long_mode() {
   );
 }
 
-void long_mode_start() {
+void long_mode_start() { 
   enable_physical_addr_extension(); 
   enable_long_mode(); 
+
+ /* asm volatile (
+    "ljmp $0x10, $0x100000"
+  );
+*/
 }

@@ -1,4 +1,4 @@
-#include <kernel/main/paging.h>
+/*#include <kernel/main/paging.h>
 
 void enable_four_level_paging() {
 	unsigned long long pdpt_addr = (unsigned long long)&page_directory_pointer_table << 12; 
@@ -26,4 +26,4 @@ void enable_four_level_paging() {
    
    
 }
- 
+ */
