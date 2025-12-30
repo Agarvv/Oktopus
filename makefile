@@ -1,81 +1,68 @@
 CC      := clang
 LD      := ld
+NASM    := nasm
 QEMU    := qemu-system-x86_64
+DD      := dd
 
-SRC_DIR := src/kernel
 INC_DIR := include
 BUILD   := build
 OBJ_DIR := $(BUILD)/obj
-ASM_OBJ := src/kernel/asm/stub/stub.o
 
-KERNEL_ELF := $(BUILD)/kernel.elf
-KERNEL_BIN := $(BUILD)/kernel.bin
-KERNEL64   := 64/kernel64
+STAGE1_SRC := src/bootloader/stage1/main.S
+STAGE2_SRC := $(shell find src/bootloader/stage2 -name "*.c")
+KERNEL_SRC := $(shell find src/kernel -name "*.c")
+ASM_SRC    := $(shell find src/asm -name "*.asm")
+
 IMG        := $(BUILD)/disk.img
-BOOTLOADER := src/bootloader/main.bin
+STAGE1_BIN := $(BUILD)/stage1.bin
+STAGE2_BIN := $(BUILD)/stage2.bin
+KERNEL_BIN := $(BUILD)/kernel.bin
 
-CFLAGS  := -target i686-none-elf -m32 -ffreestanding \
-           -fno-builtin -fno-stack-protector -nostdlib -O0 \
-           -I$(INC_DIR)
+STAGE2_OBJS := $(patsubst src/bootloader/stage2/%.c,$(OBJ_DIR)/boot2_%.o,$(STAGE2_SRC))
+KERNEL_OBJS := $(patsubst src/kernel/%.c,$(OBJ_DIR)/kernel_%.o,$(KERNEL_SRC))
+ASM_OBJS    := $(patsubst src/asm/%.asm,$(OBJ_DIR)/%.o,$(ASM_SRC))
 
-LDFLAGS := -m elf_i386 -T src/kernel/l.ld
+CFLAGS32 := -target i686-none-elf -m32 -ffreestanding -fno-builtin -fno-stack-protector -nostdlib -O0 -I$(INC_DIR)
+CFLAGS64 := -target x86_64-none-elf -m64 -ffreestanding -fno-builtin -fno-stack-protector -nostdlib -O0 -I$(INC_DIR)
 
-ALL_SRC := $(shell find $(SRC_DIR) -name "*.c")
+$(shell mkdir -p $(OBJ_DIR))
+$(shell mkdir -p $(BUILD))
 
-$(info === c files found  ===)
-$(foreach src,$(ALL_SRC),$(info $(src)))
+all: $(IMG) run
 
-KERNEL_MAIN := $(shell find $(SRC_DIR) -name "kernel.c")
-$(info === Kernel  ===)
-$(info $(KERNEL_MAIN))
+$(STAGE1_BIN): $(STAGE1_SRC)
+	$(NASM) -f bin $< -o $@
 
-ifeq ($(KERNEL_MAIN),)
-KERNEL_MAIN := $(firstword $(ALL_SRC))
-$(warning kernel.c not found, using: $(KERNEL_MAIN))
-endif
-
-OTHER_SRC := $(filter-out $(KERNEL_MAIN), $(ALL_SRC))
-
-OBJ := $(ASM_OBJ) \
-       $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(KERNEL_MAIN)) \
-       $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(OTHER_SRC))
-
-$(info === objects  ===)
-$(foreach obj,$(OBJ),$(info $(obj)))
-
-all: $(IMG)
-
-$(KERNEL_ELF): $(OBJ)
-	@echo "=== kernel linking... ==="
-	$(LD) $(LDFLAGS) $(OBJ) -o $@
-
-	@echo "=== entry point === "
-	@objdump -f $@ | grep "start address"
-
-$(KERNEL_BIN): $(KERNEL_ELF)
-	objcopy -O binary $< temp32.bin
-	cat temp32.bin $(KERNEL64) > $@
-	rm temp32.bin
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@echo "compilation: $< -> $@"
+$(OBJ_DIR)/boot2_%.o: src/bootloader/stage2/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS32) -c $< -o $@
 
-$(IMG): $(BOOTLOADER) $(KERNEL_BIN)
-	@echo "=== img creation ==="
-	rm -f $(IMG)
-	dd if=/dev/zero of=$(IMG) bs=512 count=2880
-	dd if=$(BOOTLOADER) of=$(IMG) conv=notrunc
-	dd if=$(KERNEL_BIN) of=$(IMG) bs=512 seek=1 conv=notrunc
-	@echo "img: $(IMG)"
+$(OBJ_DIR)/kernel_%.o: src/kernel/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS64) -c $< -o $@
+
+$(OBJ_DIR)/%.o: src/asm/%.asm
+	@mkdir -p $(dir $@)
+	$(NASM) -f elf32 $< -o $@
+
+$(STAGE2_BIN): $(STAGE2_OBJS) $(ASM_OBJS)
+	ld -m elf_i386 -T stage2.ld -o $(BUILD)/stage2.elf $^
+	objcopy -O binary $(BUILD)/stage2.elf $@
+
+$(KERNEL_BIN): $(KERNEL_OBJS)
+	ld -m elf_x86_64 -T kernel.ld -o $(BUILD)/kernel.elf $^
+	objcopy -O binary $(BUILD)/kernel.elf $@
+
+$(IMG): $(STAGE1_BIN) $(STAGE2_BIN) $(KERNEL_BIN)
+	dd if=/dev/zero of=$@ bs=512 count=32768
+	dd if=$(STAGE1_BIN) of=$@ bs=512 count=1 conv=notrunc
+	dd if=$(STAGE2_BIN) of=$@ bs=512 seek=1 conv=notrunc
+	dd if=$(KERNEL_BIN) of=$@ bs=512 seek=33 conv=notrunc
 
 run: $(IMG)
-	@echo "=== qemu execution  ==="
-	$(QEMU) -drive format=raw,file=$(IMG) -s
+	$(QEMU) -drive format=raw,file=$(IMG)
 
 clean:
-	rm -rf $(BUILD)
+	rm -rf $(BUILD)/*
 
-.PHONY: all run clean
-
+.PHONY: all clean run
