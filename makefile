@@ -60,7 +60,7 @@ $(IMG): $(STAGE1_BIN) $(STAGE2_BIN) $(KERNEL_BIN)
 	dd if=$(KERNEL_BIN) of=$@ bs=512 seek=33 conv=notrunc
 
 run: $(IMG)
-	$(QEMU) -drive -s format=raw,file=$(IMG)
+	$(QEMU) -drive format=raw,file=$(IMG) -s
 
 clean:
 	rm -rf $(BUILD)/*
