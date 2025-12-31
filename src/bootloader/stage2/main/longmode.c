@@ -2,6 +2,8 @@
 #include <bootloader/main/paging.h>
 //#include <kernel/drivers/video/vga/vga.h>
 
+extern void load_kernel_64();
+
 
 void enable_physical_addr_extension() {
     
@@ -65,9 +67,5 @@ void enable_long_mode() {
 void long_mode_start() { 
   enable_physical_addr_extension(); 
   enable_long_mode(); 
-
- /* asm volatile (
-    "ljmp $0x10, $0x100000"
-  );
-*/
+  load_kernel_64(); 
 }
