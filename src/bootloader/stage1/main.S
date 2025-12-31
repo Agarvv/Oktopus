@@ -2,6 +2,7 @@ org 0x7C00
 
 section .text 
 start:
+
 ; mov dx, 0x3F8
 ; mov al, 'D'
 ; out dx, al
@@ -16,11 +17,6 @@ mov dl, 0x80 ; first disk
 int 0x13 ; disk int 
 jc disk_err ; if error bios sets the carry flag to one
 
-mov si, dap_kernel 
-mov ah, 0x42 ;
-mov dl, 0x80 ; 
-int 0x13 ; 
-jc disk_err ; 
 
 
 mov ax, 2401h
@@ -161,15 +157,7 @@ dap:
     dd 1          ; LBA low
     dd 0          ; LBA high
 
-dap_kernel:
-    db 0x10       
-    db 0x00      
-    dw 10         ; number of sectors 
-    dw 0x0000    
-    dw 0x10000    
-    dd 33         ; LBA low 33
-    dd 0          ; LBA high 0
-   
+
 
 gdt_start:
 dq 0
