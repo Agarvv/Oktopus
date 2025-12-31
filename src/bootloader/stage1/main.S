@@ -1,117 +1,5 @@
 org 0x7C00
 
-
-section .bss 
-align 4096
-page_directory: 
-   ; page directory entry format:
-
-    ; 00000000000000000000 000000000000
-    ; ^^^^^^^^^^^^^^^^^^^^
-    ; page table address (bits 31–12)
-
-    ; and the other bits are just flags
-
-
-    ; format of the flags:
-
-    ; 000000000000
-    ;            ^
-    ;            present in memory
-
-    ; 000000000000
-    ;           ^
-    ;           1 for read and write, 0 for read only
-
-    ; 000000000000
-    ;          ^
-    ;          0 for kernel access, 1 for user access
-
-    ; 000000000000
-    ;         ^
-    ;         page write through
-
-    ; 000000000000
-    ;        ^
-    ;        page cache disable
-
-    ; 000000000000
-    ;       ^
-    ;       accessed
-
-    ; 000000000000
-    ;      ^
-    ;      reserved
-
-    ; 000000000000
-    ;     ^
-    ;     page size
-
-    ; 000000000000
-    ; ^^^^
-    ;  reserved
-
-    resd 1024
-
-align 4096 
-page_table: 
-   ; page table entry format:
-
-    ; 00000000000000000000 000000000000
-    ; ^^^^^^^^^^^^^^^^^^^^
-    ; physical page address 
-
-    ; and the other bits are just flags.
-
-
-    ; format of the flags:
-
-    ; 000000000000
-    ;            ^
-    ;            present in memory
-
-    ; 000000000000
-    ;           ^
-    ;           1 for read and write, 0 for read only
-
-    ; 000000000000
-    ;          ^
-    ;          0 for kernel access, 1 for user access
-
-    ; 000000000000
-    ;         ^
-    ;         page write through
-
-    ; 000000000000
-    ;        ^
-    ;        page cache disable
-
-    ; 000000000000
-    ;       ^
-    ;       accessed
-
-    ; 000000000000
-    ;      ^
-    ;      dirty (set by CPU when written)
-
-    ; 000000000000
-    ;     ^
-    ;     PAT (Page Attribute Table)
-
-    ; 000000000000
-    ;    ^
-    ;    global page (prevents TLB flush)
-
-    ; 000000000000
-    ; ^^^^
-    ; bits 9–11 - reserved / ignored (set to 0)
-
-
-
-
-
-    resd 1024
-
 section .text 
 start:
 ; mov dx, 0x3F8
@@ -127,6 +15,12 @@ mov ah, 0x42 ; extended read fn
 mov dl, 0x80 ; first disk 
 int 0x13 ; disk int 
 jc disk_err ; if error bios sets the carry flag to one
+
+mov si, dap_kernel 
+mov ah, 0x42 ;
+mov dl, 0x80 ; 
+int 0x13 ; 
+jc disk_err ; 
 
 
 mov ax, 2401h
@@ -266,6 +160,15 @@ dap:
     dw 0x1000     ; segment = 0x1000 → REAL MODE addr = 0x10000
     dd 1          ; LBA low
     dd 0          ; LBA high
+
+dap_kernel:
+    db 0x10       
+    db 0x00      
+    dw 10         ; number of sectors 
+    dw 0x0000    
+    dw 0x10000    
+    dd 33         ; LBA low 33
+    dd 0          ; LBA high 0
    
 
 gdt_start:
