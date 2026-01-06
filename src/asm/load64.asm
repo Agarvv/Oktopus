@@ -97,7 +97,7 @@ load_kernel_64:
 
    
 
-    ret
+    jmp $
 
 disk_ok: 
    .disk_bussy: 
@@ -121,15 +121,30 @@ disk_ok:
 
 polling:
     ; loop until there isnt any data to transfer anymore and disk is not busy anymore
+    ; read busy status
     in al, 0x1F7 
+    ; mask the busy bit
     and al, 0x80 
-    
-    in al, 0x1F7 
-    and al, 0x08 
-    
 
-    jnz polling
+    ; save the status so we can work here with conditional stuff
+    pushf
+    
+    ; read the DRQ bit
+    in al, 0x1F7 
+    ; mask the drq bit
+    and al, 0x08 
+
+    jz .notread 
+
+    .read:
+      in ax, 0x1F0
+    
+    
+    .notread:
+      ; restore the status 
+      popf
+
+      ; if that bit is not zero it means it is busy so loop until it isnt bussy anymore
+     jnz polling
    
-   ret 
-  
-   
+   ret  
