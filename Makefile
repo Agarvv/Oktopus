@@ -44,9 +44,7 @@ $(OBJ_DIR)/kernel_%.o: src/kernel/%.c
 	mkdir -p $(dir $@)
 	$(CC64) -m64 $(CFLAGS64) -c $< -o $@
 
-$(OBJ_DIR)/%.o: src/asm/%.asm
-	mkdir -p $(dir $@)
-	$(NASM) -f elf32 $< -o $@
+$(OBJ_DIR)/%.o: src/asm/%.asm mkdir -p $(dir $@) $(CC32) -ffreestanding -fno-builtin -fno-stack-protector -O0 -c $< -o $@
 
 $(STAGE2_BIN): $(STAGE2_OBJS) $(ASM_OBJS)
 	$(LD32) -m elf_i386 -T stage2.ld -o $(BUILD)/stage2.elf $^
