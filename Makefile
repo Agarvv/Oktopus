@@ -24,8 +24,9 @@ STAGE2_OBJS := $(patsubst src/bootloader/stage2/%.c,$(OBJ_DIR)/boot2_%.o,$(STAGE
 KERNEL_OBJS := $(patsubst src/kernel/%.c,$(OBJ_DIR)/kernel_%.o,$(KERNEL_SRC))
 ASM_OBJS    := $(patsubst src/asm/%.asm,$(OBJ_DIR)/%.o,$(ASM_SRC))
 
-CFLAGS32 := -ffreestanding -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR)
-CFLAGS64 := -ffreestanding -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR)
+CFLAGS32 := -ffreestanding -m32 -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR) -masm=intel
+
+CFLAGS64 := -ffreestanding -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR) -masm=intel
 
 $(shell mkdir -p $(OBJ_DIR))
 $(shell mkdir -p $(BUILD))
@@ -33,7 +34,7 @@ $(shell mkdir -p $(BUILD))
 all: $(IMG) run
 
 $(STAGE1_BIN): $(STAGE1_SRC)
-	NASM -f bin $< -o $@
+	$(NASM) -f bin $< -o $@
 
 $(OBJ_DIR)/boot2_%.o: src/bootloader/stage2/%.c
 	mkdir -p $(dir $@)
