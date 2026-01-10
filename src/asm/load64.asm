@@ -47,28 +47,11 @@
 ; and so on in loop until disk isnt bussy anymore.
 
 load_kernel_64:   
+  
+ 
+   
    ; check if disk can perform operations
     call disk_ok 
-
-    ; 0x1F6 takes something like this:
-    ; 00000000 
-    ; ^ always one
-
-    ; 00000000 
-    ;  ^ LBA mode
-
-    ; 00000000 
-    ;   ^ reserved (always one)
-
-    ; 00000000 
-    ;    ^ drive select (0 master, 1 slave)
-
-    ; 00000000 
-    ;     ^^^^ last lba bits
-    
-    ; i'll use 11100000 (0xE0)
-    mov al, 0xE0   
-    out 0x1F6, al 
 
     ; load LBA
     ; LBA LOW 
@@ -100,7 +83,32 @@ load_kernel_64:
     jmp $
 
 disk_ok: 
+   ; 0x1F6 takes something like this:
+    ; 00000000 
+    ; ^ always one
+
+    ; 00000000 
+    ;  ^ LBA mode
+
+    ; 00000000 
+    ;   ^ reserved (always one)
+
+    ; 00000000 
+    ;    ^ drive select (0 master, 1 slave)
+
+    ; 00000000 
+    ;     ^^^^ last lba bits
+    
+    ; i'll use 11100000 (0xE0)
+    mov al, 0xE0   
+    out 0x1F6, al  
+
    .disk_bussy: 
+      mov al, 'D'
+mov dx, 0x3F8
+out dx, al
+ 
+
       ; 00000000 
       ; ^ DISK BUSY 
 
@@ -110,6 +118,7 @@ disk_ok:
       and al, 0x80 
       jnz .disk_bussy 
    
+
    .disk_ready:
       ; 00000000 
       ;  ^ DISK READY 
@@ -119,7 +128,11 @@ disk_ok:
       ret
 
 
-polling:
+polling: 
+ mov al, 'D'
+mov dx, 0x3F8
+out dx, al
+
     ; loop until there isnt any data to transfer anymore and disk is not busy anymore
     ; read busy status
     in al, 0x1F7 

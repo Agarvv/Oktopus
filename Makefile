@@ -24,9 +24,16 @@ STAGE2_OBJS := $(patsubst src/bootloader/stage2/%.c,$(OBJ_DIR)/boot2_%.o,$(STAGE
 KERNEL_OBJS := $(patsubst src/kernel/%.c,$(OBJ_DIR)/kernel_%.o,$(KERNEL_SRC))
 ASM_OBJS    := $(patsubst src/asm/%.asm,$(OBJ_DIR)/%.o,$(ASM_SRC))
 
-CFLAGS32 := -ffreestanding -m32 -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR) -masm=intel
 
-CFLAGS64 := -ffreestanding -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR) -masm=intel
+
+CFLAGS32 := -ffreestanding -m32 -fno-builtin -fno-stack-protector -O0 \
+            -I$(INC_DIR) \
+            -B/home/laptop/Downloads/i386-elf-binutils/bin \
+            -Wa,--32 \
+            -fno-asynchronous-unwind-tables -fno-unwind-tables
+
+
+CFLAGS64 := -ffreestanding -fno-builtin -fno-stack-protector -O0 -I$(INC_DIR)
 
 $(shell mkdir -p $(OBJ_DIR))
 $(shell mkdir -p $(BUILD))
@@ -38,13 +45,15 @@ $(STAGE1_BIN): $(STAGE1_SRC)
 
 $(OBJ_DIR)/boot2_%.o: src/bootloader/stage2/%.c
 	mkdir -p $(dir $@)
-	$(CC32) -m32 $(CFLAGS32) -c $< -o $@
+	$(CC32) $(CFLAGS32) -c $< -o $@
 
 $(OBJ_DIR)/kernel_%.o: src/kernel/%.c
 	mkdir -p $(dir $@)
-	$(CC64) -m64 $(CFLAGS64) -c $< -o $@
+	$(CC64) $(CFLAGS64) -c $< -o $@
 
-$(OBJ_DIR)/%.o: src/asm/%.asm mkdir -p $(dir $@) $(CC32) -ffreestanding -fno-builtin -fno-stack-protector -O0 -c $< -o $@
+$(OBJ_DIR)/%.o: src/asm/%.asm
+	mkdir -p $(dir $@)
+	$(NASM) -f elf32 $< -o $@
 
 $(STAGE2_BIN): $(STAGE2_OBJS) $(ASM_OBJS)
 	$(LD32) -m elf_i386 -T stage2.ld -o $(BUILD)/stage2.elf $^
@@ -60,8 +69,12 @@ $(IMG): $(STAGE1_BIN) $(STAGE2_BIN) $(KERNEL_BIN)
 	$(DD) if=$(STAGE2_BIN) of=$@ bs=512 seek=1 conv=notrunc
 	$(DD) if=$(KERNEL_BIN) of=$@ bs=512 seek=33 conv=notrunc
 
+
 run: $(IMG)
-	$(QEMU) -drive format=raw,file=$(IMG) -s
+	$(QEMU) -hda $(IMG) -serial stdio -s 
+
+
+
 
 clean:
 	rm -rf $(BUILD)/*

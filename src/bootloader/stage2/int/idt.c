@@ -48,11 +48,12 @@ void idt_start() {
     );
 
     __asm__ volatile(
-       "lidt (%0)"
-        : 
-        : "r" (&idt_r)
-        : "memory" 
-    ); 
+    "lidt %0"
+    :
+    : "m"(idt_r)   
+    : "memory"
+  );
+ 
 
 }
 
